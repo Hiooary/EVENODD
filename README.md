@@ -1,3 +1,4 @@
+EVENODD码的编码与解码原理：</br>
 ![图片](https://github.com/Hiooary/EVENODD/blob/master/images/1.jpg)</br>
 ![图片](https://github.com/Hiooary/EVENODD/blob/master/images/2.jpg)</br>
 ![图片](https://github.com/Hiooary/EVENODD/blob/master/images/3.jpg)</br>
