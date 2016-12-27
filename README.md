@@ -13,3 +13,4 @@ EVENODD码的编码与解码原理：</br>
 ![图片](https://github.com/Hiooary/EVENODD/blob/master/images/12.jpg)</br>
 ![图片](https://github.com/Hiooary/EVENODD/blob/master/images/13.jpg)</br>
 ![图片](https://github.com/Hiooary/EVENODD/blob/master/images/14.jpg)</br>
+![图片](https://github.com/Hiooary/EVENODD/blob/master/images/15.jpg)</br>
