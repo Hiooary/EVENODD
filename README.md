@@ -30,4 +30,4 @@ EVENODD码的编码与解码原理：</br>
 ![图片](https://github.com/Hiooary/EVENODD/blob/master/images/29.jpg)</br>
 ![图片](https://github.com/Hiooary/EVENODD/blob/master/images/30.jpg)</br>
 ![图片](https://github.com/Hiooary/EVENODD/blob/master/images/31.jpg)</br>
-![图片](https://github.com/Hiooary/EVENODD/blob/master/images/30.jpg)</br>
+![图片](https://github.com/Hiooary/EVENODD/blob/master/images/32.jpg)</br>
