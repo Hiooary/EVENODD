@@ -8,8 +8,8 @@ EVENODD码的编码与解码原理：</br>
 ![图片](https://github.com/Hiooary/EVENODD/blob/master/images/7.jpg)
 ![图片](https://github.com/Hiooary/EVENODD/blob/master/images/8.jpg)
 ![图片](https://github.com/Hiooary/EVENODD/blob/master/images/9.jpg)</br>
-![图片](https://github.com/Hiooary/EVENODD/blob/master/images/10.jpg)</br>
-![图片](https://github.com/Hiooary/EVENODD/blob/master/images/11.jpg)</br>
+![图片](https://github.com/Hiooary/EVENODD/blob/master/images/10.jpg)
+![图片](https://github.com/Hiooary/EVENODD/blob/master/images/11.jpg)
 ![图片](https://github.com/Hiooary/EVENODD/blob/master/images/12.jpg)</br>
 ![图片](https://github.com/Hiooary/EVENODD/blob/master/images/13.jpg)</br>
 ![图片](https://github.com/Hiooary/EVENODD/blob/master/images/14.jpg)</br>
