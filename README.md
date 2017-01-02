@@ -29,7 +29,7 @@ EVENODD码的编码与解码原理：</br>
 ![图片](https://github.com/Hiooary/EVENODD/blob/master/images/28.jpg)
 ![图片](https://github.com/Hiooary/EVENODD/blob/master/images/29.jpg)
 ![图片](https://github.com/Hiooary/EVENODD/blob/master/images/30.jpg)</br>
-![图片](https://github.com/Hiooary/EVENODD/blob/master/images/31.jpg)</br>
-![图片](https://github.com/Hiooary/EVENODD/blob/master/images/32.jpg)</br>
+![图片](https://github.com/Hiooary/EVENODD/blob/master/images/31.jpg)
+![图片](https://github.com/Hiooary/EVENODD/blob/master/images/32.jpg)
 ![图片](https://github.com/Hiooary/EVENODD/blob/master/images/33.jpg)</br>
-![图片](https://github.com/Hiooary/EVENODD/blob/master/images/34.jpg)</br>
+![图片](https://github.com/Hiooary/EVENODD/blob/master/images/34.jpg)
