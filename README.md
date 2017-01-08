@@ -2,6 +2,7 @@ EVENODD码的编码与解码原理：</br>
 ![图片](https://github.com/Hiooary/EVENODD/blob/master/images/1.jpg)
 ![图片](https://github.com/Hiooary/EVENODD/blob/master/images/2.jpg)
 ![图片](https://github.com/Hiooary/EVENODD/blob/master/images/3.jpg)</br>
+
 ![图片](https://github.com/Hiooary/EVENODD/blob/master/images/4.jpg)
 ![图片](https://github.com/Hiooary/EVENODD/blob/master/images/5.jpg)
 ![图片](https://github.com/Hiooary/EVENODD/blob/master/images/6.jpg)</br>
