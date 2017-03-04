@@ -16,8 +16,28 @@ public class decode {
 				dataCache = new int[tempMemory[0].getRow()][corectOnj.length];
 				for(int i=0;i<corectObj.length;i++)
 				{
-					dataCache = super.getColumnData(corectObj,i);.
+					dataCache = super.getColumnData(corectObj,i);//获得对象元素的每一列，组成一个数组
+					tempMatrix1[i]=super.horiExclusive_OR(dataCache);//修复数据块error
+					tempMatrix2[i]=super.diagExclusive_OR(dataCache,encoding.getCommonFactor(dataCache));//修复数据块error2
 				}
+				//将修复的数据存入对象
+				super.matrixTransposition(tempMatrix1,temp);
+				tempMemory[error1].read(temp);
+				super.matrixTransposition(tempMatrix2.temp);
+				tempMemory[error2].read(temp);
+			}
+			else if(error1 >= 0 && error1 < tempMemory.length - 2) &&  error2 == tempMemory.length - 2){//原数据块和水平校验数据块的数据出错
+				int s=0;
+				int m=tempMemory.length - 2;
+				tempMatrix1 = new int[tempMemory[0].getRow()][tempMemory[0].getColumn()];
+				int[][] tempCache = new int[tempMemory[0].getRow()][tempMemory.length];
+				dataCache = new int[tempMemory[0].getRow()+1][tempMemory.length];//存储增加一行的数据
+				for(int i=0;i<tempMemory[0].getColumnData;i++){
+					tempCache = super.getColumnData(tempMemory,i));//获取对象数组中每一个元素对应列的数据
+					dataCache=super.addRow(tempCache);//增加一行
+					//计算公共因子
+					
+				}	
 			}
 		}
 		
