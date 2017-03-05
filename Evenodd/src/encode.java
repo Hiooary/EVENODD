@@ -6,9 +6,9 @@ public class encode extends A{
 	@SuppressWarnings("null")
 	protected encode()
 	{
-		int[][] dataCache,tempMatrix1,tempMatrix2;//原数据，水平校验位的数据值的转置数据，对角线校验位的数据值的转置数据	
-		getInfo[] tempMemory = null;
-		//	getColumnData(pictureIncomp[] obj,int i);//从对象数组中获取某列的方法
+		int[][] dataCache,tempMatrix1,tempMatrix2;
+		pictureInComp[] tempMemory = null;
+		A encoding = null;
 		tempMatrix1=new int[tempMemory[0].getColumn()][tempMemory[0].getRow()];//暂存运算过程中水平校验位的数据值的转置数据
 		tempMatrix2=new int[tempMemory[0].getColumn()][tempMemory[0].getRow()];//暂存运算过程中对角线校验位的数据值的转置数据
         int[][] temp= new int[tempMemory[0].getRow()][tempMemory[0].getColumn()];//充当数组转置时的临时变量
@@ -16,9 +16,8 @@ public class encode extends A{
 	    for(int i = 0; i < tempMemory.length; i++)
 	    {
 	    	dataCache = super.getColumnData(tempMemory,i);//获得对象元素中的数据中的每一列，组成一个数组
-	    	tempMatrix1[i]=super.horiEcclusive_OR(dataCache);//获得水平校验（公式（3））
-	        getInfo encodong = null;
-			tempMatrix2[i]=super.diagExclusive_OR(dataCache,encodong.getCommonFactor(dataCache));//获得对角线校验数据（公式（3））
+	    	tempMatrix1[i]=super.horiExclusive_OR(dataCache);//获得水平校验（公式（2））
+			tempMatrix2[i]=super.diagExclusive_OR(dataCache,encoding.getCommonFactor(dataCache));//获得对角线校验数据（公式（3））
 	    }
 	    //将修复的数据存入对象
 	    super.matrixTransposition(tempMatrix1,temp);//恢复原数据格式将数组转置
@@ -30,9 +29,9 @@ public class encode extends A{
 	
 	@SuppressWarnings("null")
 	protected void decode(){
-		getInfo[] tempMemory = null;
+		pictureInComp[] tempMemory = null;
 		int error1 = 0,error2 = 0;
-		getInfo encoding = null;//222
+		pictureInComp encoding = null;//222
 		if(error1 != -1 && error2 != -1){//有两个数据块出错
 			int [][] dataCache,tempMatrix1,tempMatrix2;
 		    pictureInComp[] corectObj;//暂存正确数据块的数据
@@ -92,7 +91,7 @@ public class encode extends A{
 					for(int i=0;i<m;i++)
 					{
 						dataCache = super.getColumnData(corectObj, i);
-						tempMatrix2[i]=super.horiEcclusive_OR(dataCache);//水平异或
+						tempMatrix2[i]=super.horiExclusive_OR(dataCache);//水平异或
 					}
 					super.matrixTransposition(tempMatrix2, temp);
 					tempMemory[error2].read(temp);
@@ -112,7 +111,7 @@ public class encode extends A{
 					for(int i=0;i<m;i++)
 					{
 						dataCache=super.getColumnData(corectObj, i);
-						tempMatrix1[i]=super.horiEcclusive_OR(dataCache);
+						tempMatrix1[i]=super.horiExclusive_OR(dataCache);
 					}
 					super.matrixTransposition(tempMatrix1, temp);
 					tempMemory[error1].read(temp);
@@ -200,7 +199,7 @@ public class encode extends A{
 					for(int i=0;i<corectObj.length;i++)
 					{
 						dataCache=super.getColumnData(corectObj, i);
-						tempMatrix[i]=super.horiEcclusive_OR(dataCache);
+						tempMatrix[i]=super.horiExclusive_OR(dataCache);
 					}
 					super.matrixTransposition(tempMatrix, temp);
 					tempMemory[error1].read(temp);
