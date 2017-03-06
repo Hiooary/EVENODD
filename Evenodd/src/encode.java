@@ -3,10 +3,9 @@
 public class encode extends A{
 
 	
-	@SuppressWarnings("null")
 	protected encode()
 	{
-		int[][] dataCache,tempMatrix1,tempMatrix2;
+		int[][] dataCache=null,tempMatrix1=null,tempMatrix2=null;
 		pictureInComp[] tempMemory = null;
 		A encoding = null;
 		tempMatrix1=new int[tempMemory[0].getColumn()][tempMemory[0].getRow()];//暂存运算过程中水平校验位的数据值的转置数据
@@ -27,12 +26,13 @@ public class encode extends A{
 	
 	}
 	
-	@SuppressWarnings("null")
+
 	protected void decode(){
 		pictureInComp[] tempMemory = null;
 		int error1 = 0,error2 = 0;
-		pictureInComp encoding = null;//222
-		if(error1 != -1 && error2 != -1){//有两个数据块出错
+		A encoding = null;//222
+		if(error1 != -1 && error2 != -1){
+			//有两个数据块出错
 			int [][] dataCache,tempMatrix1,tempMatrix2;
 		    pictureInComp[] corectObj;//暂存正确数据块的数据
 			tempMatrix1=new int[tempMemory[0].getColumn()][tempMemory[0].getRow()];//暂存运算过程中水平校验位的数据值的转置数据
@@ -55,7 +55,8 @@ public class encode extends A{
 				super.matrixTransposition(tempMatrix2,temp);
 				tempMemory[error2].read(temp);
 			}
-			else if((error1 >= 0 && error1 < tempMemory.length - 2) &&  error2 == tempMemory.length - 2){//原数据块和水平校验数据块的数据出错
+			else if((error1 >= 0 && error1 < tempMemory.length - 2) &&  error2 == tempMemory.length - 2)
+			{//原数据块和水平校验数据块的数据出错
 				int s=0;
 				int m=tempMemory.length - 2;
 				tempMatrix1 = new int[tempMemory[0].getRow()][tempMemory[0].getColumn()];
@@ -180,7 +181,8 @@ public class encode extends A{
 					System.out.print("error:fail to find the error disk!!");
 					System.exit(0);
 				}
-			}else if(error2 == -1 && error1 != -1){
+			}else if(error2 == -1 && error1 != -1)
+			{
 				//只有一个数据块出错
 				int m=tempMemory.length-2;
 				int[][] dataCache = new int[tempMemory[0].getRow()][m];
@@ -227,6 +229,10 @@ public class encode extends A{
 				
 			    }
 	}
+    protected static void main(String[] args)
+    {
+    	
+    }
 }
 	
 
