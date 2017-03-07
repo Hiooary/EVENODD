@@ -1,11 +1,8 @@
 
 public class A {
 	public int[][] getColumnData(pictureInComp[] tempMemory,int i){//从对象数组中获取某列的方法
-		int[][] a = null;
-		for(int t=0;t<tempMemory.length;t++)
-		{
-			//a[][]=tempMemory[i];
-		}
+		int[][] a;
+		a=tempMemory[i].dataCache;
 		return a;
 	}
 //	public int[][] getColumnData(pictureInComp[] corectObj,int i){
@@ -67,8 +64,16 @@ public class A {
 		return diagExclusive;
 	}
 
-	public void matrixTransposition(int[][] tempMatrix, int[][] temp) {
+	public int[][] matrixTransposition(int[][] tempMatrix, int[][] temp) {
 		// TODO Auto-generated method stub
+		for(int i=0;i<temp[i].length;i++)
+		{
+			for(int j = 0;j<temp.length;j++)
+			{
+				temp[i][j]=tempMatrix[j][i];
+			}
+		}
+		return temp;
 		
 	}
 	public int[][] addRow(int[][] tempCache) {

@@ -28,9 +28,9 @@ public class encode extends A{
 	
 
 	protected void decode(){
-		pictureInComp[] tempMemory = null;
-		int error1 = 0,error2 = 0;
+		pictureInComp[] tempMemory = null;//222
 		A encoding = null;//222
+		int error1 = 0,error2 = 0;	///////////////////////////////////////////
 		if(error1 != -1 && error2 != -1){
 			//有两个数据块出错
 			int [][] dataCache,tempMatrix1,tempMatrix2;

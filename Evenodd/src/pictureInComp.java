@@ -4,6 +4,7 @@ public class pictureInComp {
 	public static int[][] dataCache;
 	public pictureInComp(int[][] temp) {
 		// TODO Auto-generated constructor stub
+		dataCache=temp;
 	}
 	public static int getColumn()
 	{
