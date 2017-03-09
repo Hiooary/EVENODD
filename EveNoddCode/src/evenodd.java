@@ -47,8 +47,7 @@ public class evenodd {
 	}
 	public static int[] horiExclusive_OR(int[][] dataCache) {
 		// TODO Auto-generated method stub
-		int l=dataCache.length;
-		
+		int l=dataCache.length;		
 		int horiExculsive[]=new int[l];
 		for(int i=0;i<l;i++)
 		{
@@ -176,131 +175,251 @@ public class evenodd {
 	}
 	public static void decode(int error1,int error2,int[][] tempMemory)//译码
 	{
+		int[][] dataCache=null;
+		dataCache=encode(tempMemory);//编码后的磁盘
+		int m=dataCache[0].length-2;
 		
 		if(error1 != -1 && error2 !=-1)////两个磁盘出错
 		{
 			//int[][] tempMemory = null;//按行存储的原始数据
-			int[][] dataCache=null;
-			int[] tempMatrix1=null,tempMatrix2=null;//行校验和对角线校验
-			int[][] temp=null;
+
 			//错误的是两个校验块
-			if(error1 == tempMemory.length-2 && error2 == tempMemory.length-1)
+			if(error1 == dataCache[0].length-2 && error2 == dataCache[0].length-1)
 			{
 				//此情况类同于编码
 				encode(tempMemory);
 			}
 			//错误的一个数据块和水平校验块,此时应该传入带有校验的矩阵
-			else if((error1 >= 0 && error1 < tempMemory.length-2) && error2 == tempMemory.length-2)
+			else if((error1 >= 0 && error1 < dataCache[0].length-2) && error2 == dataCache[0].length-2)
 			{
-				dataCache=getColumnData(tempMemory);//按列存储
+				
+				//破坏数据,此处是置0/////////////////////////////////////////////////
+				for(int i=0;i<dataCache.length;i++)
+				{
+					dataCache[i][error1]=0;
+					dataCache[i][error2]=0;
+				}
+				//破坏后的数据
+//				for(int i=0;i<dataCache.length;i++)
+//				{
+//					for(int j=0;j<dataCache[i].length;j++)
+//					{
+//						System.out.print(dataCache[i][j]+" ");
+//					} 
+//					System.out.print("\n");
+//				}
+				
+				int[][] temp=new int[m][m+2];
 				//增加一个元素全为0的行
 				temp=addRow(dataCache,temp);
-				//计算s
-				int s=0;
-				int m=temp.length-2;
-				s=temp[getMod((error1-1),m)][m+1];
+//				for(int i=0;i<temp.length;i++)
+//				{
+//					for(int j=0;j<temp[i].length;j++)
+//					{
+//						System.out.print(temp[i][j]+" ");
+//					} 
+//					System.out.print("\n");
+//				}
 				
-				
-				
-				
-				
-				
-				
+				int s=temp[getMod((error1-1),m)][m+1];
+				for(int j=0;j<m;j++)
+				{
+					s=s^temp[getMod((error1-j-1),m)][j];
+				}
+				//System.out.print(s);
+				//恢复error1,公式有误，无法恢复/////////////////////////////////////////
+				for(int k=0;k<temp.length-1;k++)
+				{
+					temp[k][error1]=s^temp[getMod(error1-1,m)][m+1];
+					for(int l=0;l<temp.length;l++)
+					{	
+						if(l!=error1)
+						{		
+							temp[k][error1]=temp[k][error1]^temp[getMod(k+error1-l,m)][l];	
+							dataCache[k][error1]=temp[k][error1];
+					    }	
+					}
+				}			
+				//恢复error2,用水平校验公式
+				int[][] tempArray=new int[m-1][m];
+				for(int i=0;i<tempArray.length;i++)
+				{
+					for(int j=0;j<tempArray[i].length;j++)
+					{
+						tempArray[i][j]=temp[i][j];
+					}
+				}
+			    int[] tempMatrix1=horiExclusive_OR(tempArray);
+			    for(int i=0;i<temp.length-1;i++)
+			    {
+			    	//temp[i][error2]=tempMatrix1[i];
+			    	dataCache[i][error2]=tempMatrix1[i];
+			    }
+			    //输出
+				for(int i=0;i<dataCache.length;i++)
+				{
+					for(int j=0;j<dataCache[i].length;j++)
+					{
+						System.out.print(dataCache[i][j]+" ");
+					} 
+					System.out.print("\n");
+				}					
 			}
 			//错误的一个数据块和对角线校验块
-			else if((error1 >= 0 && error1 < tempMemory.length-2) && error2 == tempMemory.length-1)
-			{}
+			else if((error1 >= 0 && error1 < dataCache[0].length-2) && error2 == dataCache[0].length-1)
+			{
+				//破坏数据,此处是置0/////////////////////////////////////////////////
+				for(int i=0;i<dataCache.length;i++)
+				{
+					dataCache[i][error1]=0;
+					dataCache[i][error2]=0;
+				}
+				//破坏后的数据
+//				for(int i=0;i<dataCache.length;i++)
+//				{
+//					for(int j=0;j<dataCache[i].length;j++)
+//					{
+//						System.out.print(dataCache[i][j]+" ");
+//					} 
+//					System.out.print("\n");
+//				}
+				//根据水平校验公式恢复error1
+				for(int i=0;i<dataCache.length;i++)
+				{
+					dataCache[i][error1]=0;
+					for(int j=0;j<dataCache[i].length-1;j++)
+					{
+						if(j != error1)
+						  dataCache[i][error1]=dataCache[i][error1]^dataCache[i][j];
+					}
+				}
+				//根据对角线公式恢复error2
+				int[][] tempArray=new int[m-1][m];
+				for(int i=0;i<tempArray.length;i++)
+				{
+					for(int j=0;j<tempArray[i].length;j++)
+					{
+						tempArray[i][j]=dataCache[i][j];
+					}
+				}
+				int s=getCommonFactor(tempArray);
+				int[] tempMatrix2=diagExclusive_OR(tempArray,s);
+				 for(int i=0;i<tempMatrix2.length;i++)
+				    {
+				    	//temp[i][error2]=tempMatrix1[i];
+				    	dataCache[i][error2]=tempMatrix2[i];
+				    }
+				//输出
+				for(int i=0;i<dataCache.length;i++)
+				{
+					for(int j=0;j<dataCache[i].length;j++)
+					{
+						System.out.print(dataCache[i][j]+" ");
+					} 
+					System.out.print("\n");
+				}
+				
+			}
 			//错误的两个数据块
-			else if((error1 >= 0 && error1 < tempMemory.length-2) && (error2 >= 0 && error2 < tempMemory.length-2))
-			{}
-			
-			
-			
+			else if((error1 >= 0 && error1 < dataCache[0].length-2) && (error2 >= 0 && error2 < dataCache[0].length-2))
+			{
+				//破坏数据,此处是置0/////////////////////////////////////////////////
+				for(int i=0;i<dataCache.length;i++)
+				{
+					dataCache[i][error1]=0;
+					dataCache[i][error2]=0;
+				}
+				//破坏后的数据
+//				for(int i=0;i<dataCache.length;i++)
+//				{
+//					for(int j=0;j<dataCache[i].length;j++)
+//					{
+//						System.out.print(dataCache[i][j]+" ");
+//					} 
+//					System.out.print("\n");
+//				}
+				
+				//增加0行
+				int[][] temp=new int[m][m+2];
+				//增加一个元素全为0的行
+				temp=addRow(dataCache,temp);
+				int s=0;//奇偶符号
+				for(int l=0;l<m-1;l++)
+				{
+					s=s^dataCache[l][m]^dataCache[l][m+1];
+				}
+				//System.out.print(s);
+				//寻找水平综合征
+				int[] S0 = new int[m];
+				for(int u=0;u<m;u++)
+				{
+					S0[u]=0;
+					for(int l=0;l<=m;l++)
+					{
+						if(l != error1 && l!= error2)
+							S0[u]=S0[u]^temp[u][l];
+					}
+				}
+//				for(int i=0;i<S0.length;i++)
+//				{
+//					System.out.print(S0[i]);
+//				}
+				int[] S1=new int[m];//对角线综合征
+				for(int u=0;u<m;u++)
+				{
+					S1[u]=s^temp[u][m+1];
+					for(int l=0;l<m;l++)
+					{
+						if(l != error1 && l!= error2){	
+							S1[u]=S1[u]^temp[getMod(u-l,m)][l];
+						}
+					}
+				}
+//				for(int i=0;i<S1.length;i++)
+//				{
+//					System.out.print(S1[i]);
+//				}
+				//通过步骤计算
+				s=getMod((-(error2-error1)-1),m);
+				//System.out.print(s);
+				while(s!=m-1)
+				{
+					temp[s][error2]=S1[getMod(error2+s,m)]^temp[getMod(s+(error2-error1),m)][error1];
+					dataCache[s][error1]=temp[s][error2];
+					temp[s][error1]=S0[s]^temp[s][error2];
+					dataCache[s][error1]=temp[s][error1];
+					s=getMod(s-(error2-error1),m);
+				}
+				for(int i=0;i<dataCache.length;i++)
+				{
+					for(int j=0;j<dataCache[i].length;j++)
+					{
+						System.out.print(dataCache[i][j]+" ");
+					} 
+					System.out.print("\n");
+				}
+				System.out.print("\n");
+			}
 		}
 	}
 	
 	
 	
-	
-
 	public static void main(String[] args)
 	{
 		int[][] tempMemory={{0,1,0,1},{0,1,1,1},{0,0,0,0},{1,0,0,1},{0,0,0,1}};//按照块存储的原数据
+		
 //		encode(tempMemory);//编码
-		int error1 = 1,error2 = 5;//错误列数位置
-		int[][] dataCache=null;
+		int error1 = 1,error2 = 6;//错误列数位置
 		
 		//传入error1和error2的值
-		//decode(error1,error2,tempMemory);
+		decode(error1,error2,tempMemory);
 		
-		dataCache=encode(tempMemory);//编码后的磁盘
+//		int[][] dataCache=null;
+//		dataCache=encode(tempMemory);//编码后的磁盘
+//		int m=dataCache[0].length-2;
 		
-		//破坏数据,此处是置0/////////////////////////////////////////////////
-		for(int i=0;i<dataCache.length;i++)
-		{
-			dataCache[i][error1]=0;
-			dataCache[i][error2]=0;
-			//System.out.print(dataCache[i][error1]);
-		}
 
-		//破坏后的数据
-//		for(int i=0;i<dataCache.length;i++)
-//		{
-//			for(int j=0;j<dataCache[i].length;j++)
-//			{
-//				System.out.print(dataCache[i][j]+" ");
-//			} 
-//			System.out.print("\n");
-//		}
-		
-		int m=dataCache[0].length-2;
-		int[][] temp=new int[m][m+2];
-		//增加一个元素全为0的行
-		temp=addRow(dataCache,temp);
-//		for(int i=0;i<temp.length;i++)
-//		{
-//			for(int j=0;j<temp[i].length;j++)
-//			{
-//				System.out.print(temp[i][j]+" ");
-//			} 
-//			System.out.print("\n");
-//		}
-		
-		int s=temp[getMod((error1-1),m)][m+1];
-		for(int j=0;j<m;j++)
-		{
-			s=s^temp[getMod((error1-j-1),m)][j];
-		}
-		//System.out.print(s);
-		//恢复error1
-		
-		for(int i=0;i<=3;i++)
-		{
-			temp[i][error1]=s^temp[getMod(error1-1,m)][m+1];;
-			System.out.print(temp[i][error1]);
-			for(int l=0;l<temp.length;l++)
-			{	
-				if(l!=error1)
-				{		
-					System.out.print(temp[getMod(i+error1-l,m)][l]);
-					temp[i][error1]=temp[i][error1]^temp[getMod(i+error1-l,m)][l];				
-			    }	
-			}
-			System.out.print("\n");
-		}
-		for(int i=0;i<temp.length;i++)
-		{
-			for(int j=0;j<temp[i].length;j++)
-			{
-				System.out.print(temp[i][j]+" ");
-			} 
-			System.out.print("\n");
-		}
-//		
-		
-		
 	}
-
-	
 
 }
