@@ -46,7 +46,6 @@ public class encode extends A{
 				{
 					dataCache = super.getColumnData(corectObj,i);//获得对象元素的每一列，组成一个数组
 					tempMatrix1[i]=super.horiExclusive_OR(dataCache);//修复数据块error
-					
 					tempMatrix2[i]=super.diagExclusive_OR(dataCache,encoding.getCommonFactor(dataCache));//修复数据块error2
 				}
 				//将修复的数据存入对象
@@ -67,9 +66,9 @@ public class encode extends A{
 					dataCache=super.addRow(tempCache);//增加一行
 					//计算公共因子
 					s=dataCache[(error1-1+m)%m][m+1];//获取对象数组中每一个元素对应列的数据
-					for(int l=0;l<m;l++)
+					for(int j=0;j<m;j++)
 					{
-						s=s^dataCache[(error1-l-1+m)%m][l];
+						s=s^dataCache[(error1-j-1+m)%m][j];
 					}
 					//恢复第error1个数据块数据
 					for(int k=0;k<m-1;k++)
