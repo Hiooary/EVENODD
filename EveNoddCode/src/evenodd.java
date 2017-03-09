@@ -1,17 +1,5 @@
 
 public class evenodd {
-
-	//	public static int getColumn(int[][] dataCache)//获取列数
-//	{
-//		int t=dataCache[0].length;
-//		return t;
-//		
-//	}
-//	public static int getRow(int[][] dataCache)//获取行数
-//	{
-//		int l=dataCache.length;
-//		return l;	
-//	}
 	public static int getMod(int a,int b)//有限域上的模运算
 	{
 		if(a>=0)
@@ -75,7 +63,6 @@ public class evenodd {
 					continue;
 				}
 				temp=temp^dataCache[t][j];
-				
 			}
 			diagExclusive[i]=temp;
 		}
@@ -116,7 +103,18 @@ public class evenodd {
 		}
 		return temp;
 	}
-	
+	public static void display(int[][] temp)
+	{
+		for(int i=0;i<temp.length;i++)
+		{
+			for(int j=0;j<temp[i].length;j++)
+			{
+				System.out.print(temp[i][j]+" ");
+			}
+			System.out.print(" \n");
+		}
+		System.out.print(" \n");
+	}
 	
 	
 	
@@ -163,36 +161,27 @@ public class evenodd {
 		
 		//存储得到的校验盘
 		temp=matrixTransposition(tempMatrix1,tempMatrix2,dataCache);
-//		for(int i=0;i<temp.length;i++)
-//		{
-//			for(int j=0;j<temp[i].length;j++)
-//			{
-//				System.out.print(temp[i][j]+" ");
-//			}
-//			System.out.print(" \n");
-//		}
+		System.out.print("存储得到的校验盘\n");
+		for(int i=0;i<temp.length;i++)
+		{
+			for(int j=0;j<temp[i].length;j++)
+			{
+				System.out.print(temp[i][j]+" ");
+			}
+			System.out.print(" \n");
+		}
+		System.out.print(" \n");
 		return temp;
 	}
-	public static void decode(int error1,int error2,int[][] tempMemory)//译码
-	{
-		int[][] dataCache=null;
-		dataCache=encode(tempMemory);//编码后的磁盘
+	public static void decode(int error1,int error2,int[][] dataCache)//译码
+	{	
 		int m=dataCache[0].length-2;
-		
 		if(error1 != -1 && error2 !=-1)////两个磁盘出错
 		{
-			//int[][] tempMemory = null;//按行存储的原始数据
-
 			//错误的是两个校验块
 			if(error1 == dataCache[0].length-2 && error2 == dataCache[0].length-1)
 			{
 				//此情况类同于编码
-				encode(tempMemory);
-			}
-			//错误的一个数据块和水平校验块,此时应该传入带有校验的矩阵
-			else if((error1 >= 0 && error1 < dataCache[0].length-2) && error2 == dataCache[0].length-2)
-			{
-				
 				//破坏数据,此处是置0/////////////////////////////////////////////////
 				for(int i=0;i<dataCache.length;i++)
 				{
@@ -200,14 +189,67 @@ public class evenodd {
 					dataCache[i][error2]=0;
 				}
 				//破坏后的数据
-//				for(int i=0;i<dataCache.length;i++)
-//				{
-//					for(int j=0;j<dataCache[i].length;j++)
-//					{
-//						System.out.print(dataCache[i][j]+" ");
-//					} 
-//					System.out.print("\n");
-//				}
+				System.out.print("破坏后的数据\n");
+				for(int i=0;i<dataCache.length;i++)
+				{
+					for(int j=0;j<dataCache[i].length;j++)
+					{
+						System.out.print(dataCache[i][j]+" ");
+					} 
+					System.out.print("\n");
+				}
+				System.out.print("\n");
+				
+				int[][] tempArray=new int[m-1][m];
+				for(int i=0;i<tempArray.length;i++)
+				{
+					for(int j=0;j<tempArray[i].length;j++)
+					{
+						tempArray[i][j]=dataCache[i][j];
+					}
+				}
+				
+				//进行编码
+				int s=getCommonFactor(tempArray);
+				int[] tempMatrix1=horiExclusive_OR(tempArray);
+				int[] tempMatrix2=diagExclusive_OR(tempArray,s);
+				
+				for(int i=0;i<dataCache.length;i++)
+				{
+					dataCache[i][m]=tempMatrix1[i];
+					dataCache[i][m+1]=tempMatrix2[i];
+				}
+				//输出				
+				System.out.print("修复后的数据\n");
+				for(int i=0;i<dataCache.length;i++)
+				{
+					for(int j=0;j<dataCache[i].length;j++)
+					{
+						System.out.print(dataCache[i][j]+" ");
+					} 
+					System.out.print("\n");
+				}
+			}
+			//错误的一个数据块和水平校验块,此时应该传入带有校验的矩阵
+			else if((error1 >= 0 && error1 < dataCache[0].length-2) && error2 == dataCache[0].length-2)
+			{				
+				//破坏数据,此处是置0/////////////////////////////////////////////////
+				for(int i=0;i<dataCache.length;i++)
+				{
+					dataCache[i][error1]=0;
+					dataCache[i][error2]=0;
+				}
+				//破坏后的数据
+				System.out.print("破坏后的数据\n");
+				for(int i=0;i<dataCache.length;i++)
+				{
+					for(int j=0;j<dataCache[i].length;j++)
+					{
+						System.out.print(dataCache[i][j]+" ");
+					} 
+					System.out.print("\n");
+				}
+				System.out.print("\n");
 				
 				int[][] temp=new int[m][m+2];
 				//增加一个元素全为0的行
@@ -227,7 +269,7 @@ public class evenodd {
 					s=s^temp[getMod((error1-j-1),m)][j];
 				}
 				//System.out.print(s);
-				//恢复error1,公式有误，无法恢复/////////////////////////////////////////
+				//恢复error1,公式有误，无法恢复/////////////////////////////////////////////////////////////////////////////
 				for(int k=0;k<temp.length-1;k++)
 				{
 					temp[k][error1]=s^temp[getMod(error1-1,m)][m+1];
@@ -256,6 +298,7 @@ public class evenodd {
 			    	dataCache[i][error2]=tempMatrix1[i];
 			    }
 			    //输出
+			    System.out.print("修复后的数据\n");
 				for(int i=0;i<dataCache.length;i++)
 				{
 					for(int j=0;j<dataCache[i].length;j++)
@@ -263,7 +306,9 @@ public class evenodd {
 						System.out.print(dataCache[i][j]+" ");
 					} 
 					System.out.print("\n");
-				}					
+				}			
+				System.out.print("\n");
+				
 			}
 			//错误的一个数据块和对角线校验块
 			else if((error1 >= 0 && error1 < dataCache[0].length-2) && error2 == dataCache[0].length-1)
@@ -275,14 +320,15 @@ public class evenodd {
 					dataCache[i][error2]=0;
 				}
 				//破坏后的数据
-//				for(int i=0;i<dataCache.length;i++)
-//				{
-//					for(int j=0;j<dataCache[i].length;j++)
-//					{
-//						System.out.print(dataCache[i][j]+" ");
-//					} 
-//					System.out.print("\n");
-//				}
+				System.out.print("破坏后的数据\n");
+				for(int i=0;i<dataCache.length;i++)
+				{
+					for(int j=0;j<dataCache[i].length;j++)
+					{
+						System.out.print(dataCache[i][j]+" ");
+					} 
+					System.out.print("\n");
+				}
 				//根据水平校验公式恢复error1
 				for(int i=0;i<dataCache.length;i++)
 				{
@@ -310,6 +356,7 @@ public class evenodd {
 				    	dataCache[i][error2]=tempMatrix2[i];
 				    }
 				//输出
+				 System.out.print("修复后的数据\n");
 				for(int i=0;i<dataCache.length;i++)
 				{
 					for(int j=0;j<dataCache[i].length;j++)
@@ -318,6 +365,7 @@ public class evenodd {
 					} 
 					System.out.print("\n");
 				}
+				System.out.print("\n");
 				
 			}
 			//错误的两个数据块
@@ -330,14 +378,16 @@ public class evenodd {
 					dataCache[i][error2]=0;
 				}
 				//破坏后的数据
-//				for(int i=0;i<dataCache.length;i++)
-//				{
-//					for(int j=0;j<dataCache[i].length;j++)
-//					{
-//						System.out.print(dataCache[i][j]+" ");
-//					} 
-//					System.out.print("\n");
-//				}
+				System.out.print("破坏后的数据\n");
+				for(int i=0;i<dataCache.length;i++)
+				{
+					for(int j=0;j<dataCache[i].length;j++)
+					{
+						System.out.print(dataCache[i][j]+" ");
+					} 
+					System.out.print("\n");
+				}
+				System.out.print("\n");
 				
 				//增加0行
 				int[][] temp=new int[m][m+2];
@@ -381,7 +431,6 @@ public class evenodd {
 //				}
 				//通过步骤计算
 				s=getMod((-(error2-error1)-1),m);
-				//System.out.print(s);
 				while(s!=m-1)
 				{
 					temp[s][error2]=S1[getMod(error2+s,m)]^temp[getMod(s+(error2-error1),m)][error1];
@@ -390,6 +439,8 @@ public class evenodd {
 					dataCache[s][error1]=temp[s][error1];
 					s=getMod(s-(error2-error1),m);
 				}
+				
+				System.out.print("修复后的数据\n");
 				for(int i=0;i<dataCache.length;i++)
 				{
 					for(int j=0;j<dataCache[i].length;j++)
@@ -401,6 +452,17 @@ public class evenodd {
 				System.out.print("\n");
 			}
 		}
+		//只有一个数据块出错
+		else if(error2 == -1 && error1 != -1)
+		{
+			
+		}
+		else
+		{//错误数据块不能找到
+			System.out.print("error:fail to find the error disk!!");
+			System.exit(0);
+		
+	    }
 	}
 	
 	
@@ -410,15 +472,12 @@ public class evenodd {
 		int[][] tempMemory={{0,1,0,1},{0,1,1,1},{0,0,0,0},{1,0,0,1},{0,0,0,1}};//按照块存储的原数据
 		
 //		encode(tempMemory);//编码
-		int error1 = 1,error2 = 6;//错误列数位置
+		int error1 = 0,error2 = 2;//错误列数位置
 		
 		//传入error1和error2的值
-		decode(error1,error2,tempMemory);
-		
-//		int[][] dataCache=null;
-//		dataCache=encode(tempMemory);//编码后的磁盘
-//		int m=dataCache[0].length-2;
-		
+		int[][] dataCache=null;
+		dataCache=encode(tempMemory);//编码后的磁盘
+		decode(error1,error2,dataCache);
 
 	}
 
