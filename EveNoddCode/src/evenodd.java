@@ -272,7 +272,7 @@ public class evenodd {
 				//恢复error1,公式有误，无法恢复,修改公式后，可以恢复/////////////////////////////////////////////////////////////////////////////
 				for(int k=0;k<temp.length-1;k++)
 				{
-					temp[k][error1]=s^temp[getMod(k+1,m)][m+1];
+					temp[k][error1]=s^temp[getMod(error1+k,m)][m+1];
 					for(int l=0;l<temp.length;l++)
 					{	
 						if(l!=error1)
@@ -472,7 +472,7 @@ public class evenodd {
 		int[][] tempMemory={{0,1,0,1},{0,1,1,1},{0,0,0,0},{1,0,0,1},{0,0,0,1}};//按照块存储的原数据
 		
 //		encode(tempMemory);//编码
-		int error1 = 1,error2 = 5;//错误列数位置
+		int error1 = 3,error2 = 6;//错误列数位置
 		
 		//传入error1和error2的值
 		int[][] dataCache=null;
