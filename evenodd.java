@@ -1,4 +1,4 @@
-
+//一个矩阵的恢复法
 public class evenodd {
 	public static int getMod(int a,int b)//有限域上的模运算
 	{
@@ -9,7 +9,6 @@ public class evenodd {
 		else
 			return (a+b)%b;
 	}
-	
 	public static int[][] getColumnData(int[][] tempMemory){//从对象数组中获取某列的方法
 		int m=tempMemory.length;
 		int l=tempMemory[0].length;
@@ -22,8 +21,7 @@ public class evenodd {
 			}
 		}
 		return temp;	
-	}
-	
+	}	
     public static int getCommonFactor(int[][] dataCache)
 	{
 		int s=0;
@@ -126,24 +124,11 @@ public class evenodd {
 		int s;//奇偶校验符号
 		
 //		System.out.print("输出原数据："+"\n");
-//		for(int i=0;i<tempMemory.length;i++)
-//		{
-//			for(int j=0;j<tempMemory[i].length;j++)
-//			{
-//				System.out.print(tempMemory[i][j]+" ");
-//			}
-//			System.out.print(" \n");
-//		}
+//      display(tempMemory);
+		
 //		System.out.print("输出转存数据："+"\n");
 		dataCache=getColumnData(tempMemory);
-//		for(int i=0;i<dataCache.length;i++)
-//		{
-//			for(int j=0;j<dataCache[i].length;j++)
-//			{
-//				System.out.print(dataCache[i][j]+" ");
-//			}
-//			System.out.print(" \n");
-//		}
+		//display(dataCache);
 		
 		s=getCommonFactor(dataCache);
 		//System.out.print(s);//求符号s
@@ -162,15 +147,7 @@ public class evenodd {
 		//存储得到的校验盘
 		temp=matrixTransposition(tempMatrix1,tempMatrix2,dataCache);
 		System.out.print("存储得到的校验盘\n");
-		for(int i=0;i<temp.length;i++)
-		{
-			for(int j=0;j<temp[i].length;j++)
-			{
-				System.out.print(temp[i][j]+" ");
-			}
-			System.out.print(" \n");
-		}
-		System.out.print(" \n");
+		display(temp);
 		return temp;
 	}
 	public static void decode(int error1,int error2,int[][] dataCache)//译码
@@ -190,15 +167,7 @@ public class evenodd {
 				}
 				//破坏后的数据
 				System.out.print("破坏后的数据\n");
-				for(int i=0;i<dataCache.length;i++)
-				{
-					for(int j=0;j<dataCache[i].length;j++)
-					{
-						System.out.print(dataCache[i][j]+" ");
-					} 
-					System.out.print("\n");
-				}
-				System.out.print("\n");
+				display(dataCache);
 				
 				int[][] tempArray=new int[m-1][m];
 				for(int i=0;i<tempArray.length;i++)
@@ -221,14 +190,7 @@ public class evenodd {
 				}
 				//输出				
 				System.out.print("修复后的数据\n");
-				for(int i=0;i<dataCache.length;i++)
-				{
-					for(int j=0;j<dataCache[i].length;j++)
-					{
-						System.out.print(dataCache[i][j]+" ");
-					} 
-					System.out.print("\n");
-				}
+				display(dataCache);
 			}
 			//错误的一个数据块和水平校验块,此时应该传入带有校验的矩阵
 			else if((error1 >= 0 && error1 < dataCache[0].length-2) && error2 == dataCache[0].length-2)
@@ -241,27 +203,12 @@ public class evenodd {
 				}
 				//破坏后的数据
 				System.out.print("破坏后的数据\n");
-				for(int i=0;i<dataCache.length;i++)
-				{
-					for(int j=0;j<dataCache[i].length;j++)
-					{
-						System.out.print(dataCache[i][j]+" ");
-					} 
-					System.out.print("\n");
-				}
-				System.out.print("\n");
+				display(dataCache);
 				
 				int[][] temp=new int[m][m+2];
 				//增加一个元素全为0的行
 				temp=addRow(dataCache,temp);
-//				for(int i=0;i<temp.length;i++)
-//				{
-//					for(int j=0;j<temp[i].length;j++)
-//					{
-//						System.out.print(temp[i][j]+" ");
-//					} 
-//					System.out.print("\n");
-//				}
+//				display(temp);
 				
 				int s=temp[getMod((error1-1),m)][m+1];
 				for(int j=0;j<m;j++)
@@ -299,15 +246,7 @@ public class evenodd {
 			    }
 			    //输出
 			    System.out.print("修复后的数据\n");
-				for(int i=0;i<dataCache.length;i++)
-				{
-					for(int j=0;j<dataCache[i].length;j++)
-					{
-						System.out.print(dataCache[i][j]+" ");
-					} 
-					System.out.print("\n");
-				}			
-				System.out.print("\n");
+			    display(dataCache);
 				
 			}
 			//错误的一个数据块和对角线校验块
@@ -321,14 +260,7 @@ public class evenodd {
 				}
 				//破坏后的数据
 				System.out.print("破坏后的数据\n");
-				for(int i=0;i<dataCache.length;i++)
-				{
-					for(int j=0;j<dataCache[i].length;j++)
-					{
-						System.out.print(dataCache[i][j]+" ");
-					} 
-					System.out.print("\n");
-				}
+				display(dataCache);
 				//根据水平校验公式恢复error1
 				for(int i=0;i<dataCache.length;i++)
 				{
@@ -357,15 +289,7 @@ public class evenodd {
 				    }
 				//输出
 				 System.out.print("修复后的数据\n");
-				for(int i=0;i<dataCache.length;i++)
-				{
-					for(int j=0;j<dataCache[i].length;j++)
-					{
-						System.out.print(dataCache[i][j]+" ");
-					} 
-					System.out.print("\n");
-				}
-				System.out.print("\n");
+				 display(dataCache);
 				
 			}
 			//错误的两个数据块
@@ -379,15 +303,7 @@ public class evenodd {
 				}
 				//破坏后的数据
 				System.out.print("破坏后的数据\n");
-				for(int i=0;i<dataCache.length;i++)
-				{
-					for(int j=0;j<dataCache[i].length;j++)
-					{
-						System.out.print(dataCache[i][j]+" ");
-					} 
-					System.out.print("\n");
-				}
-				System.out.print("\n");
+				display(dataCache);
 				
 				//增加0行
 				int[][] temp=new int[m][m+2];
@@ -441,15 +357,7 @@ public class evenodd {
 				}
 				
 				System.out.print("修复后的数据\n");
-				for(int i=0;i<dataCache.length;i++)
-				{
-					for(int j=0;j<dataCache[i].length;j++)
-					{
-						System.out.print(dataCache[i][j]+" ");
-					} 
-					System.out.print("\n");
-				}
-				System.out.print("\n");
+				display(dataCache);
 			}
 		}
 		//只有一个数据块出错
