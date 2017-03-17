@@ -380,8 +380,8 @@ public class evenodd {
 		int[][] tempMemory={{0,1,0,1},{0,1,1,1},{0,0,0,0},{1,0,0,1},{0,0,0,1}};//按照块存储的原数据
 		
 //		encode(tempMemory);//编码
-		int error1 = 3,error2 = 6;//错误列数位置
 		
+		int error1 = -1,error2 = -1;//错误列数位置
 		//传入error1和error2的值
 		int[][] dataCache=null;
 		dataCache=encode(tempMemory);//编码后的磁盘
