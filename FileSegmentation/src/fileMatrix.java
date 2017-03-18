@@ -10,7 +10,7 @@ import java.io.IOException;
 import java.nio.channels.FileChannel;
 
 
-public class fileMatrix {
+public class fileMatrix extends evenodd{
 	
 public static final int M = 5;//块数，为素数
 private static long BLOCK_SIZE = 0;//块的大小
