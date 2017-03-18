@@ -1,13 +1,19 @@
+import java.io.DataOutputStream;
+import java.io.EOFException;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
 import java.io.IOException;
 
 
 public class encode extends fileMatrix{
+	public static int LEN;
 
 /******
  * 编码
+ * @throws IOException 
  */	
 @SuppressWarnings("unused")
-public static int[][][] encode(int[][][] tempMemory)
+public static int[][][] encode(int[][][] tempMemory) throws IOException
 {
 	int count=tempMemory.length;
 	//System.out.print(count);
@@ -55,6 +61,28 @@ public static int[][][] encode(int[][][] tempMemory)
 //	temp=matrixTransposition(tempMatrix1,tempMatrix2,dataCache);
 	System.out.print("存储得到的校验盘\n");
 	display(temp[0]);
+	
+	//将编码后的结果以文件形式存储
+	DataOutputStream fpw1=new DataOutputStream(new FileOutputStream("./2-"+M+"p.jpg"));
+	DataOutputStream fpw2=new DataOutputStream(new FileOutputStream("./2-"+(M+1)+"p.jpg"));
+	
+//	int len=0;
+//	while(len <= LEN)
+//	{
+		for(int i=0;i<tempMatrix1.length;i++)
+		{
+			for(int j=0;j<tempMatrix1[0].length;j++)
+			{
+				fpw1.writeByte(tempMatrix1[i][j]);
+				fpw2.writeByte(tempMatrix2[i][j]);
+			//	len++;
+			}	
+		}	
+	//}
+		fpw1.close();
+		fpw2.close();
+	
+	
 	return temp;
 }
 	
@@ -66,9 +94,9 @@ public static void main(String[] args) throws IOException
 	    //System.out.print(buffer[0].length);
 	    
 	    int count=0;
-	    int len=buffer[0].length;
-	    if((len)%(M-1)!=0)
-	    	count= len / (M-1) + 1;
+	    int LEN=buffer[0].length;
+	    if((LEN)%(M-1)!=0)
+	    	count= LEN / (M-1) + 1;
 	    //System.out.print(count);
 	    
 	    int[][][] tempMemory=new int[count][M][M-1];//将数据划分为矩阵
@@ -82,7 +110,7 @@ public static void main(String[] args) throws IOException
 		    		//System.out.print(buffer[i][t]);
 		    		
 		    		//对最后的一个矩阵补齐行数
-		    		if(t>=len)
+		    		if(t>=LEN)
 		    		{
 		    			tempMemory[k][i][j]=0;
 		    		}
@@ -112,6 +140,10 @@ public static void main(String[] args) throws IOException
 //	     int bufSize;
 		//编码
 		encode(tempMemory);
+		
+		
+		
+		
 		//decode();
 		//merge();
 	}
