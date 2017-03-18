@@ -81,8 +81,6 @@ public static int[][][] encode(int[][][] tempMemory) throws IOException
 	//}
 		fpw1.close();
 		fpw2.close();
-	
-	
 	return temp;
 }
 	
