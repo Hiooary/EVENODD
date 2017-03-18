@@ -23,7 +23,7 @@ private static final int BLOCK_SIZE = 2048;
 	public static void split() throws IOException
 	{
 		int blockNo;
-		String filePath="./2.jpg";		
+		String filePath="./1.jpg";		
 		
 		//对buffer进行内存分配
 		int[] buffer=new int[BUFFER_SIZE];
@@ -87,31 +87,30 @@ private static final int BLOCK_SIZE = 2048;
     {
     	int blockNo;
     	int[] buffer=new int[BUFFER_SIZE];
-    	char[] a = new char[20];
-		String str = new String(a); ;
     	String filePath="./3.jpg";
-    	
+   
     	DataOutputStream fpw=new DataOutputStream(new FileOutputStream(filePath));
-    	blockNo=0;
-    	while(true)
+    	blockNo=0;    	
+    	for(int k=0;k<6;k++)
     	{
-    		str=String.format("2-%d.jpg", blockNo);//格式化str
-			System.out.print(str);
-			
-			DataInputStream fpr=new DataInputStream(new BufferedInputStream(new FileInputStream(filePath)));
-			while(true)
-			{
-				for(int i=0;i<buffer.length;i++)
-					buffer[i]=fpr.readInt();
-				for(int i=0;i<buffer.length;i++)
-					fpw.writeInt(buffer[i]);
-			}			
-//			fpr.close();
-//			blockNo++;
-    	}   	
-//    	fpw.close();
-//    	
-//    	return 0;
+    		DataInputStream fpr=new DataInputStream(new BufferedInputStream(new FileInputStream("./2-"+blockNo+".jpg")));
+    		//System.out.print(getFileLength("./2-"+blockNo+".jpg"));
+    		for(int j=0;j<BUFFER_SIZE;j++)
+    		{
+    			buffer[j]=fpr.readInt();
+				fpw.writeInt(buffer[j]);   			
+    		}
+//    		while(fpr.read()!=-1)
+//    		{
+////    			buffer[i]=fpr.readInt();
+////				fpw.writeInt(buffer[i]);
+//				i++;
+//    		}			
+    		//System.out.print(i);
+    		fpr.close();
+    		blockNo++;	
+    	}
+		fpw.close();
     }
 
 private static long getFileLength(String filePath)
@@ -154,7 +153,9 @@ private static long getFileLength(String filePath)
 
 public static void main(String[] args) throws IOException
 {
-	split();
-	//merge();
+	//split();
+	//encode();
+	//decode();
+	//merge();合并后的图片无法查看
 }
 }
