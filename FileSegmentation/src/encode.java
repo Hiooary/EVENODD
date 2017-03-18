@@ -70,22 +70,24 @@ public static void main(String[] args) throws IOException
 	    int count=0;
 	    int len=buffer[0].length;
 	    if((len)%(M-1)!=0)
-	    	count=(len)/(M-1)+1;
+	    	count= len / (M-1) + 1;
 	    //System.out.print(count);
 	    
 	    int[][][] tempMemory=null;//将数据划分为矩阵
 	    int t=0;
-	    for(int k=0;k<count;k++)
-	    {
-		    for(int i=0;i<M-1;i++)
-			    {
-			    	for(int j=0;j<M;j++)
-			    	{
-			    		tempMemory[k][i][j]=buffer[i][t];
-			    	}
-			    	t++;
-			    }
-	    }
+	    //while(t < len){
+		    for(int k=0;k < count;k++)
+		    {
+			    for(int i=0;i<M-1;i++)
+				    {
+				    	for(int j=0;j<M;j++)
+				    	{
+				    		tempMemory[k][i][j]=buffer[i][t];
+				    	}
+				    	t++;
+				    }
+		    }
+	   // }
 	    
 //	    for(int k=0;k<2;k++)
 //	    {
