@@ -7,44 +7,55 @@ public class encode extends fileMatrix{
  * 编码
  */	
 @SuppressWarnings("unused")
-public static int[][] encode(int[][] tempMemory)
+public static int[][][] encode(int[][][] tempMemory)
 {
-	int count=tempMemory[0].length;
+	int count=tempMemory.length;
 	//System.out.print(count);
-	int dataCache[][] = null;           //矩阵形式存储 {{1,0,1,1,0},{0,1,1,0,0},{1,1,0,0,0},{0,1,0,1,1}};
-	int[] tempMatrix1=null,tempMatrix2=null;//行校验和对角线校验
-	int[][] temp=null;//存储校验数据后的盘符
-	int s;//奇偶校验符号
 	
-	System.out.print("输出原数据："+"\n");
-    display(tempMemory);
-    
+	int[][][] dataCache = new int[count][M-1][M];           //矩阵形式存储 {{1,0,1,1,0},{0,1,1,0,0},{1,1,0,0,0},{0,1,0,1,1}};
+	int[][] tempMatrix1=new int[count][M-1];
+	int[][]tempMatrix2=new int[count][M-1];//行校验和对角线校验
+	int[][][] temp=new int[count][M-1][M+2];//存储校验数据后的盘符
+	int s[] = new int[count];//奇偶校验符号
 //	
+	System.out.print("输出原数据："+"\n");
+    display(tempMemory[0]);
+//    
+////	
 	System.out.print("输出转存数据："+"\n");
-	dataCache=getColumnData(tempMemory);
-	display(dataCache);
-	
-	s=getCommonFactor(dataCache);
-	//System.out.print(s);//求符号s
-	
-	//获取水平校验
-	tempMatrix1=horiExclusive_OR(dataCache);
-//	for(int i=0;i<tempMatrix1.length;i++){
-//		System.out.print(tempMatrix1[i]);
-//	}
-	//获取对角线校验
-	tempMatrix2=diagExclusive_OR(dataCache,s);
-//	for(int i=0;i<tempMatrix2.length;i++){
-//		System.out.print(tempMatrix2[i]+" ");
-//	}
-	
-	//存储得到的校验盘
-	temp=matrixTransposition(tempMatrix1,tempMatrix2,dataCache);
-	System.out.print("存储得到的校验盘\n");
-	display(temp);
-	return temp;
-	
+	for(int i=0;i<count;i++)
+	{
+		dataCache[i]=getColumnData(tempMemory[i]);
+		s[i]=getCommonFactor(dataCache[i]);
+		tempMatrix1[i]=horiExclusive_OR(dataCache[i]);
+		tempMatrix2[i]=diagExclusive_OR(dataCache[i],s[i]);
+		temp[i]=matrixTransposition(tempMatrix1[i],tempMatrix2[i],dataCache[i]);
+	}
+	display(dataCache[0]);
 
+	
+//	s=getCommonFactor(dataCache);
+    System.out.print(s[0]+"\n");//求符号s
+//	
+//	//获取水平校验
+//	tempMatrix1=horiExclusive_OR(dataCache);
+	for(int i=0;i<tempMatrix1[0].length;i++)
+	{
+		System.out.print(tempMatrix1[0][i]+" ");
+	}
+	System.out.print("\n");
+//	//获取对角线校验
+	//tempMatrix2=diagExclusive_OR(dataCache,s);
+	for(int i=0;i<tempMatrix2[0].length;i++){
+		System.out.print(tempMatrix2[0][i]+" ");
+	}
+	System.out.print("\n");
+//	
+//	//存储得到的校验盘
+//	temp=matrixTransposition(tempMatrix1,tempMatrix2,dataCache);
+	System.out.print("存储得到的校验盘\n");
+	display(temp[0]);
+	return temp;
 }
 	
 @SuppressWarnings("null")
@@ -100,7 +111,7 @@ public static void main(String[] args) throws IOException
 //	     String filePath="./1.jpg";
 //	     int bufSize;
 		//编码
-		encode(tempMemory[0]);
+		encode(tempMemory);
 		//decode();
 		//merge();
 	}
