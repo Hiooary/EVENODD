@@ -12,9 +12,9 @@ import java.nio.channels.FileChannel;
 
 public class fileMatrix {
 	
-private static final int M = 5;//块数，为素数
-private static final int BUFFER_SIZE = 512;
-protected static long BLOCK_SIZE = 0;
+public static final int M = 5;//块数，为素数
+private static long BLOCK_SIZE = 0;//块的大小
+protected static int[][] buffer=null;//块的缓冲区
 
 
 /******
@@ -22,7 +22,7 @@ protected static long BLOCK_SIZE = 0;
  * @return
  * @throws IOException 
  */
-	public static void split() throws IOException
+	public static int[][] split() throws IOException
 	{
 		int blockNo;
 		String filePath="./1.jpg";		
@@ -33,24 +33,20 @@ protected static long BLOCK_SIZE = 0;
 		//System.out.print(buffer_size);
 		
 		//对buffer进行内存分配
-		int[] buffer=new int[(int) BLOCK_SIZE];
-        
+		int[][] buffer=new int[M][(int) BLOCK_SIZE];
 		
 		//以二进制打开文件
 		DataInputStream fpr=new DataInputStream(new BufferedInputStream(new FileInputStream(filePath)));
 		blockNo=0;
 		try{
-			int j=0;
 			while(true)
 			{
 				DataOutputStream fpw=new DataOutputStream(new FileOutputStream("./2-"+blockNo+".jpg"));
 				
 				for(int i=0;i<BLOCK_SIZE;i++)			
 				{
-					buffer[i]=fpr.readByte();
-					fpw.writeByte((buffer[i]));
-					System.out.print(buffer[i]+" ");
-					j++;
+					buffer[blockNo][i]=fpr.readByte();
+					fpw.writeByte((buffer[blockNo][i]));
 				}
 				fpw.close();
 				blockNo++;
@@ -59,6 +55,7 @@ protected static long BLOCK_SIZE = 0;
 		{
 			fpr.close();
 		}		
+		return buffer;
 	}
 
 /******
@@ -72,7 +69,7 @@ protected static long BLOCK_SIZE = 0;
     	int blockNo;
 
     	BLOCK_SIZE=getFileLength("./2-0.jpg");
-    	int[] buffer=new int[(int) BLOCK_SIZE];
+    	int[][] buffer=new int[M][(int) BLOCK_SIZE];
     	String filePath="./3.jpg";
    
     	DataOutputStream fpw=new DataOutputStream(new FileOutputStream(filePath));
@@ -82,10 +79,10 @@ protected static long BLOCK_SIZE = 0;
 	    	{
 	    		DataInputStream fpr=new DataInputStream(new BufferedInputStream(new FileInputStream("./2-"+blockNo+".jpg")));
 	    		//System.out.print(getFileLength("./2-"+blockNo+".jpg"));
-	    		for(int j=0;j<BLOCK_SIZE;j++)
+	    		for(int i=0;i<BLOCK_SIZE;i++)
 	    		{
-	    			buffer[j]=fpr.readByte();
-					fpw.writeByte(buffer[j]);   			
+	    			buffer[blockNo][i]=fpr.readByte();
+					fpw.writeByte(buffer[blockNo][i]);   			
 	    		}
 	    		fpr.close();
 	    		blockNo++;	
