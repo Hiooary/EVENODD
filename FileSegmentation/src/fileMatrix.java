@@ -12,9 +12,10 @@ import java.nio.channels.FileChannel;
 
 public class fileMatrix {
 	
-	
+private static final int M = 5;//块数，为素数
 private static final int BUFFER_SIZE = 512;
-protected static final int BLOCK_SIZE = 2048;
+protected static long BLOCK_SIZE = 0;
+
 
 /******
  * 对文件进行划分块
@@ -26,9 +27,14 @@ protected static final int BLOCK_SIZE = 2048;
 		int blockNo;
 		String filePath="./1.jpg";		
 		
+		long length=getFileLength(filePath);
+		if((length % M)!=0)
+			BLOCK_SIZE = (length / M) + 1;
+		//System.out.print(buffer_size);
+		
 		//对buffer进行内存分配
-		int[] buffer=new int[BLOCK_SIZE];
-        //System.out.print(buffer.length);
+		int[] buffer=new int[(int) BLOCK_SIZE];
+        
 		
 		//以二进制打开文件
 		DataInputStream fpr=new DataInputStream(new BufferedInputStream(new FileInputStream(filePath)));
@@ -54,6 +60,7 @@ protected static final int BLOCK_SIZE = 2048;
 			fpr.close();
 		}		
 	}
+
 /******
  * 对文件进行组合
  * @return
@@ -63,13 +70,15 @@ protected static final int BLOCK_SIZE = 2048;
 	public static void merge() throws FileNotFoundException,IOException
     {
     	int blockNo;
-    	int[] buffer=new int[BLOCK_SIZE];
+
+    	BLOCK_SIZE=getFileLength("./2-0.jpg");
+    	int[] buffer=new int[(int) BLOCK_SIZE];
     	String filePath="./3.jpg";
    
     	DataOutputStream fpw=new DataOutputStream(new FileOutputStream(filePath));
     	blockNo=0;    	
     	try{
-	    	for(int k=0;k<6;k++)/////////////////////////////////////////////////////////
+	    	for(int k=0;k<M;k++)/////////////////////////////////////////////////////////
 	    	{
 	    		DataInputStream fpr=new DataInputStream(new BufferedInputStream(new FileInputStream("./2-"+blockNo+".jpg")));
 	    		//System.out.print(getFileLength("./2-"+blockNo+".jpg"));
@@ -85,11 +94,12 @@ protected static final int BLOCK_SIZE = 2048;
     		fpw.close();
     	}
     }
+
 /******
-  * 求文件的长度
-  * @return
-  * 
-  */	
+ * 求文件的长度
+ * @return
+ * 
+ */	
 public static long getFileLength(String filePath)
 {
 	// TODO Auto-generated method stub

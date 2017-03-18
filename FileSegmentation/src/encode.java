@@ -53,7 +53,7 @@ public encode(String filePath,int bufSize){
 			{
 				if(i<K)
 				{
-					offset=(stripe_index * K + i ) * BLOCK_SIZE;
+					offset=(int) ((stripe_index * K + i ) * BLOCK_SIZE);
 					if(offset < length)
 					{
 						
@@ -68,12 +68,12 @@ public encode(String filePath,int bufSize){
 	
 public static void main(String[] args) throws IOException
 	{
-		split();
+		//split();
 //	     String filePath="./1.jpg";
 //	     int bufSize;
 		//encode();
 		//decode();
-		//merge();
+		merge();
 	}
 
 }
