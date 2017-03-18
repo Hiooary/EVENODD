@@ -1,6 +1,7 @@
 import java.io.BufferedInputStream;
 import java.io.DataInputStream;
 import java.io.DataOutputStream;
+import java.io.EOFException;
 import java.io.File;
 import java.io.FileInputStream;
 import java.io.FileNotFoundException;
@@ -13,7 +14,7 @@ public class fileMatrix {
 	
 	
 private static final int BUFFER_SIZE = 512;
-private static final int BLOCK_SIZE = 2048;
+protected static final int BLOCK_SIZE = 2048;
 
 /******
  * 对文件进行划分块
@@ -26,57 +27,33 @@ private static final int BLOCK_SIZE = 2048;
 		String filePath="./1.jpg";		
 		
 		//对buffer进行内存分配
-		int[] buffer=new int[BUFFER_SIZE];
+		int[] buffer=new int[BLOCK_SIZE];
         //System.out.print(buffer.length);
 		
 		//以二进制打开文件
 		DataInputStream fpr=new DataInputStream(new BufferedInputStream(new FileInputStream(filePath)));
 		blockNo=0;
-		while(fpr.read()!=-1)
-		{
-			DataOutputStream fpw=new DataOutputStream(new FileOutputStream("./2-"+blockNo+".jpg"));
-			for(int i=0;i<BUFFER_SIZE;i++)			
+		try{
+			int j=0;
+			while(true)
 			{
-				buffer[i]=fpr.readInt();
-				fpw.writeInt(buffer[i]);
+				DataOutputStream fpw=new DataOutputStream(new FileOutputStream("./2-"+blockNo+".jpg"));
+				
+				for(int i=0;i<BLOCK_SIZE;i++)			
+				{
+					buffer[i]=fpr.readByte();
+					fpw.writeByte((buffer[i]));
+					System.out.print(buffer[i]+" ");
+					j++;
+				}
+				fpw.close();
+				blockNo++;
 			}
-			fpw.close();
-			blockNo++;
-		}
-		fpr.close();
+		}catch(EOFException e)
+		{
+			fpr.close();
+		}		
 	}
-	
-		
-//		while(true)
-//		{
-//			limit = length - BLOCK_SIZE * blockNo;//检测文件是否读完
-//			if(limit > BLOCK_SIZE)
-//				limit = BLOCK_SIZE;
-//			if(limit <=0 )
-//				break;
-//			
-//			System.out.print("2-"+blockNo+".jpg");
-//			//str=String.format("2-%d.jpg", blockNo);//格式化str
-//			//System.out.print(str);
-//			
-//			//以二进制写方式打开文件
-//			//DataOutputStream fpw=new DataOutputStream(new FileOutputStream(filePath));
-//			
-//			count=0;
-//			while(count < limit)
-//			{
-//				//一次性读取  BLOCK_SIZE * 1 字节的数据
-//				for(int i=0;i<buffer.length;i++)
-//					buffer[i]=fpr.readInt();
-//				for(int i=0;i<buffer.length;i++)
-//					fpw.writeInt(buffer[i]);
-//				count += BUFFER_SIZE;
-//			}
-//			fpw.close();
-//			blockNo++;
-//		}
-//		fpr.close();
-
 /******
  * 对文件进行组合
  * @return
@@ -86,34 +63,34 @@ private static final int BLOCK_SIZE = 2048;
 	public static void merge() throws FileNotFoundException,IOException
     {
     	int blockNo;
-    	int[] buffer=new int[BUFFER_SIZE];
+    	int[] buffer=new int[BLOCK_SIZE];
     	String filePath="./3.jpg";
    
     	DataOutputStream fpw=new DataOutputStream(new FileOutputStream(filePath));
     	blockNo=0;    	
-    	for(int k=0;k<6;k++)
-    	{
-    		DataInputStream fpr=new DataInputStream(new BufferedInputStream(new FileInputStream("./2-"+blockNo+".jpg")));
-    		//System.out.print(getFileLength("./2-"+blockNo+".jpg"));
-    		for(int j=0;j<BUFFER_SIZE;j++)
-    		{
-    			buffer[j]=fpr.readInt();
-				fpw.writeInt(buffer[j]);   			
-    		}
-//    		while(fpr.read()!=-1)
-//    		{
-////    			buffer[i]=fpr.readInt();
-////				fpw.writeInt(buffer[i]);
-//				i++;
-//    		}			
-    		//System.out.print(i);
-    		fpr.close();
-    		blockNo++;	
+    	try{
+	    	for(int k=0;k<6;k++)/////////////////////////////////////////////////////////
+	    	{
+	    		DataInputStream fpr=new DataInputStream(new BufferedInputStream(new FileInputStream("./2-"+blockNo+".jpg")));
+	    		//System.out.print(getFileLength("./2-"+blockNo+".jpg"));
+	    		for(int j=0;j<BLOCK_SIZE;j++)
+	    		{
+	    			buffer[j]=fpr.readByte();
+					fpw.writeByte(buffer[j]);   			
+	    		}
+	    		fpr.close();
+	    		blockNo++;	
+	    	}
+    	}catch(EOFException e){
+    		fpw.close();
     	}
-		fpw.close();
     }
-
-private static long getFileLength(String filePath)
+/******
+  * 求文件的长度
+  * @return
+  * 
+  */	
+public static long getFileLength(String filePath)
 {
 	// TODO Auto-generated method stub
 	long ret = 0;
@@ -151,11 +128,4 @@ private static long getFileLength(String filePath)
 	return ret;
 }
 
-public static void main(String[] args) throws IOException
-{
-	//split();
-	//encode();
-	//decode();
-	//merge();合并后的图片无法查看
-}
 }
