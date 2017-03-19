@@ -176,48 +176,50 @@ public static void decode(int error1,int error2,int[][][] dataCache) throws IOEx
 			System.out.print("破坏后的数据\n");
 			display(dataCache[0]);
 			
-			//增加一个元素全为0的行,并求出符号s
+			//增加一个元素全为0的行
 			int[][][] temp=new int[count][m][m+2];
-			int[] s=new int[count];
+			
 			for(int c=0;c<count;c++)
 			{
 				temp[c]=addRow(dataCache[c],temp[c]);
+			}
+			display(temp[0]);
+			
+			int[] s=new int[count];
+			for(int c=0;c<count;c++)
+			{
 				s[c]=temp[c][getMod((error1-1),m)][m+1];
 				for(int j=0;j<m;j++)
 				{
 					s[c]=s[c]^temp[c][getMod((error1-j-1),m)][j];
 				}
 			}
-//			display(temp[0]);
-//			System.out.print(s[0]);
+			System.out.print(s[0]+" ");// 123
 			
 			//恢复error1,公式有误，无法恢复,修改公式后，可以恢复/////////////////////////////////////////////////////////////////////////////
-			//并用文件格式输出
-			DataOutputStream fpw1=new DataOutputStream(new FileOutputStream("./2-"+error1+".jpg"));
-			
-			for(int c=0;c < count;c++)
-			{
-				for(int k=0;k<temp[c].length-1;k++)
+			//并用文件格式输出	
+//			for(int c=0;c<count;c++)
+//			{
+			int f=0;
+				for(int k=0;k<temp[f].length-1;k++)
 				{
-					temp[c][k][error1]=s[c]^temp[c][getMod(error1+k,m)][m+1];
-					for(int l=0;l<temp[c].length;l++)
+					temp[f][k][error1]=s[f]^temp[f][getMod(error1+k,m)][m+1];
+					System.out.print(temp[f][k][error1]+" ");
+					for(int l=0;l<temp[f].length;l++)
 					{	
 						if(l!=error1)
 						{		
-							temp[c][k][error1]=temp[c][k][error1]^temp[c][getMod(k+error1-l,m)][l];
+							temp[f][k][error1]=temp[f][k][error1]^temp[f][getMod(k+error1-l,m)][l];
+							System.out.print(temp[f][getMod(k+error1-l,m)][l]+" ");
 					    }	
 					}
-					
-					dataCache[c][k][error1]=temp[c][k][error1];
-					fpw1.writeByte(dataCache[c][k][error1]);
+					System.out.print(temp[f][k][error1]+" ");
+					dataCache[f][k][error1]=temp[f][k][error1];
 				}		
-			}
-			fpw1.close();
-				
+			//}
+	
 			//恢复error2,用水平校验公式
 			//并用文件格式表示
-			
-			DataOutputStream fpw2=new DataOutputStream(new FileOutputStream("./2-"+error2+".jpg"));
 			
 			//去除校验块
 			int[][][] tempArray=new int[count][m-1][m];
@@ -240,11 +242,8 @@ public static void decode(int error1,int error2,int[][][] dataCache) throws IOEx
 				    {
 				    	//temp[i][error2]=tempMatrix1[i];
 				    	dataCache[c][i][error2]=tempMatrix1[c][i];
-				    	fpw2.writeByte(tempMatrix1[c][i]);
 				    }
 			}
-		    
-			fpw2.close();
 			
 		    //控制台输出
 		    System.out.print("修复后的数据\n");
@@ -287,7 +286,6 @@ public static void decode(int error1,int error2,int[][][] dataCache) throws IOEx
 						tempArray[c][i][j]=dataCache[c][i][j];
 					}
 				}	
-				
 			}
 			
 			int[] s=new int[count];
@@ -378,7 +376,7 @@ public static void decode(int error1,int error2,int[][][] dataCache) throws IOEx
 //			}
 			
 			//通过步骤计算
-			int temp_s=0;
+			int temp_s;
 			for(int c=0;c<count;c++)
 			{
 				s[c]=getMod((-(error2-error1)-1),m);
@@ -460,11 +458,15 @@ public static void main(String[] args) throws IOException
 		////编码
 		int[][][] dataCache;//接收编码后的矩阵, 应该设置为运行编码后，在运行译码还是能用
 		dataCache=encode(tempMemory);
-		
 		//译码
 		//在没解决全局dataCache的情况下，先注释dataCache的文件输出
-		int error1 = 0,error2 = 1;//错误位置
+		
+		//第二。四情况还不行
+		
+		int error1 = 1,error2 = 5;//错误位置  //2
 		decode(error1,error2,dataCache);
+		System.out.print(123^0^(-98)^81^(-2));
+		System.out.print(123^(10));
 //		
 		//decode();
 		//merge();
