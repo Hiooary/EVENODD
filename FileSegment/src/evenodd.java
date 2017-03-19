@@ -86,7 +86,7 @@ public class evenodd {
 		
 		return temp;
 	}
-	private static int[][] addRow(int[][] dataCache,int[][] temp) {//增加一个0行
+	public static int[][] addRow(int[][] dataCache,int[][] temp) {//增加一个0行
 		// TODO Auto-generated method stub
 		int i,j;
 		for(i=0;i<dataCache.length;i++)
@@ -114,7 +114,25 @@ public class evenodd {
 		}
 		System.out.print(" \n");
 	}	
-//	public static int[][] encode(int[][] tempMemory)//编码
+/******
+ *破坏数据,此处置为0
+ */    
+	public static int[][][] Destroy(int error1,int error2,int[][][] dataCache)
+	{
+		int count=dataCache.length;
+		for(int k=0;k<count;k++)
+		{
+			for(int i=0;i<dataCache[0].length;i++)
+			{
+				dataCache[k][i][error1]=0;
+				dataCache[k][i][error2]=0;
+			}
+		}
+		return dataCache;
+	}
+	
+	
+	//	public static int[][] encode(int[][] tempMemory)//编码
 //	{
 //		int dataCache[][] = null;//矩阵形式存储 {{1,0,1,1,0},{0,1,1,0,0},{1,1,0,0,0},{0,1,0,1,1}};
 //		int[] tempMatrix1=null,tempMatrix2=null;//行校验和对角线校验

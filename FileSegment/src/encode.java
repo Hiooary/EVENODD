@@ -61,25 +61,25 @@ public static int[][][] encode(int[][][] tempMemory) throws IOException
 	System.out.print("存储得到的校验盘\n");
 	display(temp[0]);
 	
-	//将编码后的结果以文件形式存储
-	DataOutputStream fpw1=new DataOutputStream(new FileOutputStream("./2-"+M+".jpg"));
-	DataOutputStream fpw2=new DataOutputStream(new FileOutputStream("./2-"+(M+1)+".jpg"));
-	
-//	int len=0;
-//	while(len <= LEN)
-//	{
-		for(int i=0;i<tempMatrix1.length;i++)
-		{
-			for(int j=0;j<tempMatrix1[0].length;j++)
-			{
-				fpw1.writeByte(tempMatrix1[i][j]);
-				fpw2.writeByte(tempMatrix2[i][j]);
-			//	len++;
-			}	
-		}	
-	//}
-		fpw1.close();
-		fpw2.close();
+//	//将编码后的结果以文件形式存储
+//	DataOutputStream fpw1=new DataOutputStream(new FileOutputStream("./2-"+M+".jpg"));
+//	DataOutputStream fpw2=new DataOutputStream(new FileOutputStream("./2-"+(M+1)+".jpg"));
+//	
+////	int len=0;
+////	while(len <= LEN)
+////	{
+//		for(int i=0;i<tempMatrix1.length;i++)
+//		{
+//			for(int j=0;j<tempMatrix1[0].length;j++)
+//			{
+//				fpw1.writeByte(tempMatrix1[i][j]);
+//				fpw2.writeByte(tempMatrix2[i][j]);
+//			//	len++;
+//			}	
+//		}	
+//	//}
+//		fpw1.close();
+//		fpw2.close();
 		
 	return temp;
 }
@@ -100,14 +100,15 @@ public static void decode(int error1,int error2,int[][][] dataCache) throws IOEx
 		{
 			//此情况类同于编码
 			//破坏数据,此处是置0/////////////////////////////////////////////////
-			for(int k=0;k<count;k++)
-			{
-				for(int i=0;i<dataCache[0].length;i++)
-				{
-					dataCache[k][i][error1]=0;
-					dataCache[k][i][error2]=0;
-				}
-			}
+			Destroy(error1,error2,dataCache);
+//			for(int k=0;k<count;k++)
+//			{
+//				for(int i=0;i<dataCache[0].length;i++)
+//				{
+//					dataCache[k][i][error1]=0;
+//					dataCache[k][i][error2]=0;
+//				}
+//			}
 			
 			//破坏后的数据
 			System.out.print("破坏后的数据\n");
@@ -169,58 +170,84 @@ public static void decode(int error1,int error2,int[][][] dataCache) throws IOEx
 		//错误的一个数据块和水平校验块,此时应该传入带有校验的矩阵
 		else if((error1 >= 0 && error1 < m ) && error2 == m)
 		{				
-			//破坏数据,此处是置0/////////////////////////////////////////////////
-			for(int i=0;i<dataCache.length;i++)
-			{
-				dataCache[i][error1]=0;
-				dataCache[i][error2]=0;
-			}
+			//破坏数据,此处是置0，可以写成一个函数/////////////////////////////////////////////////
+			Destroy(error1,error2,dataCache);
 			//破坏后的数据
 			System.out.print("破坏后的数据\n");
-			display(dataCache);
+			display(dataCache[0]);
 			
-			int[][] temp=new int[m][m+2];
-			//增加一个元素全为0的行
-			temp=addRow(dataCache,temp);
-//			display(temp);
-			
-			int s=temp[getMod((error1-1),m)][m+1];
-			for(int j=0;j<m;j++)
+			//增加一个元素全为0的行,并求出符号s
+			int[][][] temp=new int[count][m][m+2];
+			int[] s=new int[count];
+			for(int i=0;i<count;i++)
 			{
-				s=s^temp[getMod((error1-j-1),m)][j];
-			}
-			//System.out.print(s);
-			//恢复error1,公式有误，无法恢复,修改公式后，可以恢复/////////////////////////////////////////////////////////////////////////////
-			for(int k=0;k<temp.length-1;k++)
-			{
-				temp[k][error1]=s^temp[getMod(error1+k,m)][m+1];
-				for(int l=0;l<temp.length;l++)
-				{	
-					if(l!=error1)
-					{		
-						temp[k][error1]=temp[k][error1]^temp[getMod(k+error1-l,m)][l];	
-						dataCache[k][error1]=temp[k][error1];
-				    }	
-				}
-			}			
-			//恢复error2,用水平校验公式
-			int[][] tempArray=new int[m-1][m];
-			for(int i=0;i<tempArray.length;i++)
-			{
-				for(int j=0;j<tempArray[i].length;j++)
+				temp[i]=addRow(dataCache[i],temp[i]);
+				s[i]=temp[i][getMod((error1-1),m)][m+1];
+				for(int j=0;j<m;j++)
 				{
-					tempArray[i][j]=temp[i][j];
+					s[i]=s[i]^temp[i][getMod((error1-j-1),m)][j];
 				}
 			}
-		    int[] tempMatrix1=horiExclusive_OR(tempArray);
-		    for(int i=0;i<temp.length-1;i++)
-		    {
-		    	//temp[i][error2]=tempMatrix1[i];
-		    	dataCache[i][error2]=tempMatrix1[i];
-		    }
-		    //输出
+//			display(temp[0]);
+//			System.out.print(s[0]);
+			
+			//恢复error1,公式有误，无法恢复,修改公式后，可以恢复/////////////////////////////////////////////////////////////////////////////
+			//并用文件格式输出
+			DataOutputStream fpw1=new DataOutputStream(new FileOutputStream("./2-"+error1+".jpg"));
+			
+			for(int c=0;c<count;c++)
+			{
+				for(int k=0;k<temp.length-1;k++)
+				{
+					temp[c][k][error1]=s[c]^temp[c][getMod(error1+k,m)][m+1];
+					for(int l=0;l<temp[c].length;l++)
+					{	
+						if(l!=error1)
+						{		
+							temp[c][k][error1]=temp[c][k][error1]^temp[c][getMod(k+error1-l,m)][l];	///////////
+							dataCache[c][k][error1]=temp[c][k][error1];
+							fpw1.writeByte(temp[c][k][error1]);
+					    }	
+					}
+				}		
+			}
+			fpw1.close();
+				
+			//恢复error2,用水平校验公式
+			//并用文件格式表示
+			
+			DataOutputStream fpw2=new DataOutputStream(new FileOutputStream("./2-"+error2+".jpg"));
+			
+			  //去除校验块
+			int[][][] tempArray=new int[count][m-1][m];
+			for(int c=0;c<count;c++)
+			{
+				for(int i=0;i<tempArray[c].length;i++)
+				{
+					for(int j=0;j<tempArray[c][i].length;j++)
+					{
+						tempArray[c][i][j]=temp[c][i][j];
+					}
+				}
+			}
+			
+			int[][] tempMatrix1=new int[count][];
+			for(int c=0;c<count;c++)
+			{
+				tempMatrix1[c]=horiExclusive_OR(tempArray[c]);
+			    for(int i=0;i<temp[c].length-1;i++)
+				    {
+				    	//temp[i][error2]=tempMatrix1[i];
+				    	dataCache[c][i][error2]=tempMatrix1[c][i];
+				    	fpw2.writeByte(tempMatrix1[c][i]);
+				    }
+			}
+		    
+			fpw2.close();
+			
+		    //控制台输出
 		    System.out.print("修复后的数据\n");
-		    display(dataCache);
+		    display(dataCache[0]);
 			
 		}
 		//错误的一个数据块和对角线校验块
@@ -399,12 +426,10 @@ public static void main(String[] args) throws IOException
 		dataCache=encode(tempMemory);
 		
 		//译码
-		int error1 = 5,error2 = 6;//错误位置
+		//在没解决全局dataCache的情况下，先注释dataCache的文件输出
+		int error1 = 1,error2 = 5;//错误位置
 		decode(error1,error2,dataCache);
-		
-		
-		
-		
+//		
 		//decode();
 		//merge();
 	}
