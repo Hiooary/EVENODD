@@ -108,7 +108,7 @@ public class evenodd {
 		{
 			for(int j=0;j<temp[i].length;j++)
 			{
-				System.out.print(temp[i][j]+" ");
+				System.out.printf("%6d",temp[i][j]);
 			}
 			System.out.print(" \n");
 		}
