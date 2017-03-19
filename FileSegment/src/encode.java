@@ -319,17 +319,21 @@ public static void decode(int error1,int error2,int[][][] dataCache) throws IOEx
 			
 			//增加一个元素全为0的行
 			int[][][] temp=new int[count][m][m+2];
-			int[] s=new int[count];//奇偶符号
-			
 			for(int c=0;c<count;c++)
 			{
 				temp[c]=addRow(dataCache[c],temp[c]);
+			}		
+			//display(temp[0]);
+			
+			int[] s=new int[count];//奇偶符号
+			for(int c=0;c<count;c++)
+			{
 				s[c]=0;
 				for(int l=0;l<m-1;l++)
 				{
 					s[c]=s[c]^dataCache[c][l][m]^dataCache[c][l][m+1];
 				}
-			}			
+			}		
 			//System.out.print(s[0]);
 			
 			
@@ -348,9 +352,9 @@ public static void decode(int error1,int error2,int[][][] dataCache) throws IOEx
 				}	
 			}
 			
-//			for(int i=0;i<S0.length;i++)
+//			for(int i=0;i<S0[0].length;i++)
 //			{
-//				System.out.print(S0[i]);
+//				System.out.print(S0[0][i]+" ");
 //			}
 			
 			int[][] S1=new int[count][m];//对角线综合征
@@ -368,25 +372,26 @@ public static void decode(int error1,int error2,int[][][] dataCache) throws IOEx
 				}
 			}
 			
-//			for(int i=0;i<S1.length;i++)
+//			for(int i=0;i<S1[0].length;i++)
 //			{
 //				System.out.print(S1[0][i]);
 //			}
 			
 			//通过步骤计算
+			int temp_s=0;
 			for(int c=0;c<count;c++)
 			{
 				s[c]=getMod((-(error2-error1)-1),m);
-				while(s[c]!=m-1)
+				temp_s=s[c];
+				while(temp_s!=(m-1))
 				{
-					temp[c][(s[c])][error2]=S1[c][getMod(error2+s[c],m)]^temp[c][getMod(s[c]+(error2-error1),m)][error1];
-					dataCache[(s[c])][error1]=temp[(s[c])][error2];
-					temp[c][(s[c])][error1]=S0[c][(s[c])]^temp[c][(s[c])][error2];
-					dataCache[c][(s[c])][error1]=temp[c][(s[c])][error1];
-					s[c]=getMod(s[c]-(error2-error1),m);
+					temp[c][temp_s][error2]=S1[c][getMod(error2+temp_s,m)]^temp[c][getMod(temp_s+(error2-error1),m)][error1];
+					temp[c][temp_s][error1]=S0[c][temp_s]^temp[c][temp_s][error2];
+					dataCache[c][temp_s][error2]=temp[c][temp_s][error2];
+					dataCache[c][temp_s][error1]=temp[c][temp_s][error1];
+					temp_s=getMod(temp_s-(error2-error1),m);
 				}
 			}
-			
 			
 			System.out.print("修复后的数据\n");
 			display(dataCache[0]);
@@ -458,7 +463,7 @@ public static void main(String[] args) throws IOException
 		
 		//译码
 		//在没解决全局dataCache的情况下，先注释dataCache的文件输出
-		int error1 = 1,error2 = 2;//错误位置
+		int error1 = 0,error2 = 1;//错误位置
 		decode(error1,error2,dataCache);
 //		
 		//decode();

@@ -366,7 +366,7 @@ public class evenodd {
 //				while(s!=m-1)
 //				{
 //					temp[s][error2]=S1[getMod(error2+s,m)]^temp[getMod(s+(error2-error1),m)][error1];
-//					dataCache[s][error1]=temp[s][error2];
+//					dataCache[s][error2]=temp[s][error2];
 //					temp[s][error1]=S0[s]^temp[s][error2];
 //					dataCache[s][error1]=temp[s][error1];
 //					s=getMod(s-(error2-error1),m);
