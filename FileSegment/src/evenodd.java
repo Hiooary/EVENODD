@@ -1,5 +1,6 @@
 //一个矩阵的恢复法
 public class evenodd {
+	
 	public static int getMod(int a,int b)//有限域上的模运算
 	{
 		if(a>=0)
@@ -22,7 +23,7 @@ public class evenodd {
 		}
 		return temp;	
 	}	
-    public static int getCommonFactor(int[][] dataCache)
+    public static int getCommonFactor(int[][] dataCache)//求s
 	{
 		int s=0;
 		for(int i=0;i<dataCache.length;i++)
@@ -31,7 +32,7 @@ public class evenodd {
 		}
 		return s;
 	}
-	public static int[] horiExclusive_OR(int[][] dataCache) {
+	public static int[] horiExclusive_OR(int[][] dataCache) {//水平校验
 		// TODO Auto-generated method stub
 		int l=dataCache.length;		
 		int horiExculsive[]=new int[l];
@@ -46,7 +47,7 @@ public class evenodd {
 		}
 		return horiExculsive;
 	}
-	public static int[] diagExclusive_OR(int[][] dataCache, int commonFactor) {
+	public static int[] diagExclusive_OR(int[][] dataCache, int commonFactor) {//对角线校验
 		// TODO Auto-generated method stub
 		int l=dataCache.length;
 		int diagExclusive[] = new int[l];
@@ -101,7 +102,7 @@ public class evenodd {
 		}
 		return temp;
 	}
-	public static void display(int[][] temp)
+	public static void display(int[][] temp)//显示
 	{
 		for(int i=0;i<temp.length;i++)
 		{
