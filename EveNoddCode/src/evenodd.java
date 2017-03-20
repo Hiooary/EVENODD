@@ -1,4 +1,8 @@
-//一个矩阵的恢复法
+/******
+ * 单个矩阵的恢复
+ * @return
+ * 
+ */	
 public class evenodd {
 	public static int getMod(int a,int b)//有限域上的模运算
 	{
@@ -25,9 +29,10 @@ public class evenodd {
     public static int getCommonFactor(int[][] dataCache)
 	{
 		int s=0;
-		for(int i=0;i<dataCache.length;i++)
+		int m=dataCache[0].length;
+		for(int i=1;i<m;i++)
 		{
-			s=s^dataCache[dataCache.length-1-i][i];
+			s=s^dataCache[getMod(m-1-i,m)][i];
 		}
 		return s;
 	}
@@ -112,10 +117,7 @@ public class evenodd {
 			System.out.print(" \n");
 		}
 		System.out.print(" \n");
-	}
-	
-	
-	
+	}	
 	public static int[][] encode(int[][] tempMemory)//编码
 	{
 		int dataCache[][] = null;//矩阵形式存储 {{1,0,1,1,0},{0,1,1,0,0},{1,1,0,0,0},{0,1,0,1,1}};
@@ -208,7 +210,7 @@ public class evenodd {
 				int[][] temp=new int[m][m+2];
 				//增加一个元素全为0的行
 				temp=addRow(dataCache,temp);
-//				display(temp);
+				display(temp);
 				
 				int s=temp[getMod((error1-1),m)][m+1];
 				for(int j=0;j<m;j++)
@@ -225,10 +227,12 @@ public class evenodd {
 						if(l!=error1)
 						{		
 							temp[k][error1]=temp[k][error1]^temp[getMod(k+error1-l,m)][l];	
-							dataCache[k][error1]=temp[k][error1];
+							System.out.print(temp[getMod(k+error1-l,m)][l]+" ");
 					    }	
 					}
+					dataCache[k][error1]=temp[k][error1];
 				}			
+				System.out.print("\n");
 				//恢复error2,用水平校验公式
 				int[][] tempArray=new int[m-1][m];
 				for(int i=0;i<tempArray.length;i++)
@@ -347,10 +351,10 @@ public class evenodd {
 //				}
 				//通过步骤计算
 				s=getMod((-(error2-error1)-1),m);
-				while(s!=m-1)
+				while(s!=(m-1))
 				{
 					temp[s][error2]=S1[getMod(error2+s,m)]^temp[getMod(s+(error2-error1),m)][error1];
-					dataCache[s][error1]=temp[s][error2];
+					dataCache[s][error2]=temp[s][error2];
 					temp[s][error1]=S0[s]^temp[s][error2];
 					dataCache[s][error1]=temp[s][error1];
 					s=getMod(s-(error2-error1),m);
@@ -372,16 +376,14 @@ public class evenodd {
 		
 	    }
 	}
-	
-	
-	
+		
 	public static void main(String[] args)
 	{
 		int[][] tempMemory={{0,1,0,1},{0,1,1,1},{0,0,0,0},{1,0,0,1},{0,0,0,1}};//按照块存储的原数据
 		
 //		encode(tempMemory);//编码
 		
-		int error1 = -1,error2 = -1;//错误列数位置
+		int error1 = 0,error2 = 5;//错误列数位置
 		//传入error1和error2的值
 		int[][] dataCache=null;
 		dataCache=encode(tempMemory);//编码后的磁盘
