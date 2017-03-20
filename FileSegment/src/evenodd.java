@@ -1,4 +1,8 @@
-//一个矩阵的恢复法
+
+/******************************
+ *******算法的一些基本函数
+ *******
+ */  
 public class evenodd {
 	
 	public static int getMod(int a,int b)//有限域上的模运算

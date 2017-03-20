@@ -135,4 +135,15 @@ public static long getFileLength(String filePath)
 	return ret;
 }
 
+/******
+ * 将文件转换为矩阵
+ * @return
+ * 
+ */	
+public static void fileToMatrix()
+{
+	
+}
+
+
 }

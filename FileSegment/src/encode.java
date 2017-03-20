@@ -14,12 +14,12 @@ public class encode extends fileMatrix{
  */	
 public static int[][][] encode(int[][][] tempMemory) throws IOException
 {
-	int count=tempMemory.length;
+	int count=tempMemory.length;//总共分了多少个矩阵
 	//System.out.print(count);
 	
-	int[][][] dataCache = new int[count][M-1][M];           //矩阵形式存储 {{1,0,1,1,0},{0,1,1,0,0},{1,1,0,0,0},{0,1,0,1,1}};
-	int[][] tempMatrix1=new int[count][M-1];
-	int[][]tempMatrix2=new int[count][M-1];//行校验和对角线校验
+	int[][][] dataCache = new int[count][M-1][M];//转置矩阵，4*5
+	int[][] tempMatrix1=new int[count][M-1];//行校验
+	int[][]tempMatrix2=new int[count][M-1];//对角线校验
 	int[][][] temp=new int[count][M-1][M+2];//存储校验数据后的盘符
 	int s[] = new int[count];//奇偶校验符号
 //	
@@ -38,26 +38,6 @@ public static int[][][] encode(int[][][] tempMemory) throws IOException
 	}
 	display(dataCache[0]);
 
-	
-//	s=getCommonFactor(dataCache);
-//    System.out.print(s[0]+"\n");//求符号s
-//	
-//	//获取水平校验
-//	tempMatrix1=horiExclusive_OR(dataCache);
-//	for(int i=0;i<tempMatrix1[0].length;i++)
-//	{
-//		System.out.print(tempMatrix1[0][i]+" ");
-//	}
-//	System.out.print("\n");
-//	//获取对角线校验
-	//tempMatrix2=diagExclusive_OR(dataCache,s);
-//	for(int i=0;i<tempMatrix2[0].length;i++){
-//		System.out.print(tempMatrix2[0][i]+" ");
-//	}
-//	System.out.print("\n");
-//	
-//	//存储得到的校验盘
-//	temp=matrixTransposition(tempMatrix1,tempMatrix2,dataCache);
 	System.out.print("存储得到的校验盘\n");
 	display(temp[0]);
 	
@@ -101,15 +81,12 @@ public static void decode(int error1,int error2,int[][][] dataCache) throws IOEx
 			//此情况类同于编码
 			//破坏数据,此处是置0/////////////////////////////////////////////////
 			Destroy(error1,error2,dataCache);
-//			for(int k=0;k<count;k++)
-//			{
-//				for(int i=0;i<dataCache[0].length;i++)
-//				{
-//					dataCache[k][i][error1]=0;
-//					dataCache[k][i][error2]=0;
-//				}
-//			}
 			
+			//从磁盘读取文件碎块
+			int Disk_num=M+2;//块号
+			dd
+			
+					
 			//破坏后的数据
 			System.out.print("破坏后的数据\n");
 			display(dataCache[0]);
@@ -194,27 +171,29 @@ public static void decode(int error1,int error2,int[][][] dataCache) throws IOEx
 					s[c]=s[c]^temp[c][getMod((error1-j-1),m)][j];
 				}
 			}
-			System.out.print(s[0]+" ");// 123
 			
 			//恢复error1,公式有误，无法恢复,修改公式后，可以恢复/////////////////////////////////////////////////////////////////////////////
 			//并用文件格式输出	
-//			for(int c=0;c<count;c++)
-//			{
-			int f=0;
-				for(int k=0;k<temp[f].length-1;k++)
+			DataOutputStream fpw1=new DataOutputStream(new FileOutputStream("./2-"+error1+".jpg"));
+			
+			for(int c=0;c<count;c++)
+			{
+				for(int k=0;k<temp[c].length-1;k++)
 				{
-					temp[f][k][error1]=s[f]^temp[f][getMod(error1+k,m)][m+1];
+					temp[c][k][error1]=s[c]^temp[c][getMod(error1+k,m)][m+1];
 					//System.out.print(temp[f][k][error1]+" ");
-					for(int l=0;l<temp[f].length;l++)
+					for(int l=0;l<temp[c].length;l++)
 					{	
 						if(l!=error1)
 						{		
-							temp[f][k][error1]=temp[f][k][error1]^temp[f][getMod(k+error1-l,m)][l];
+							temp[c][k][error1]=temp[c][k][error1]^temp[c][getMod(k+error1-l,m)][l];
 					    }	
 					}
-					dataCache[f][k][error1]=temp[f][k][error1];
+					dataCache[c][k][error1]=temp[c][k][error1];
+					fpw1.writeByte(dataCache[c][k][error1]);
 				}		
-			//}
+			}
+			fpw1.close();
 	
 			//恢复error2,用水平校验公式
 			//并用文件格式表示
@@ -231,7 +210,7 @@ public static void decode(int error1,int error2,int[][][] dataCache) throws IOEx
 					}
 				}
 			}
-			
+			DataOutputStream fpw2=new DataOutputStream(new FileOutputStream("./2-"+error2+".jpg"));
 			int[][] tempMatrix1=new int[count][];
 			for(int c=0;c<count;c++)
 			{
@@ -240,8 +219,13 @@ public static void decode(int error1,int error2,int[][][] dataCache) throws IOEx
 				    {
 				    	//temp[i][error2]=tempMatrix1[i];
 				    	dataCache[c][i][error2]=tempMatrix1[c][i];
+				    	fpw2.writeByte(dataCache[c][i][error2]);
 				    }
 			}
+			fpw2.close();
+			
+			/////////////////////////////////////////////////恢复出来有点坏
+			merge();
 			
 		    //控制台输出
 		    System.out.print("修复后的数据\n");
@@ -461,7 +445,7 @@ public static void main(String[] args) throws IOException
 		
 		//第二。四情况还不行
 		
-		int error1 = 2,error2 = 4;//错误位置  //2
+		int error1 = 2,error2 = 5;//错误位置  //2
 		decode(error1,error2,dataCache);
 		
 //		
