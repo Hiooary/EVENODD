@@ -11,7 +11,7 @@ public class encode extends fileMatrix{
  * 编码
  * @throws IOException 
  */	
-public static void encode() throws IOException
+public static int[][] encode() throws IOException
 {
 	//读取五个文件碎块
 	int[][] tempMatrix = new int[M][length];
@@ -19,6 +19,8 @@ public static void encode() throws IOException
 	{
 		tempMatrix[i]=FileToBlock("./2-"+i+".jpg");
 	}
+	display(tempMatrix);
+	
 	int[][][] tempMemory=BlockToMatrix(tempMatrix);
 	System.out.print("输出原数据："+"\n");
 	display(tempMemory[0]);
@@ -47,11 +49,13 @@ public static void encode() throws IOException
 	}
 
 	System.out.print("存储得到的校验盘\n");
-	display(temp[0]);
+	//display(temp[0]);
 	
 	//将编码后的结果以文件形式存储
 	BlockToFile(MatrixToBlock(temp),M);
 	BlockToFile(MatrixToBlock(temp),M+1);
+	
+	return tempMatrix;
 }
 
 /******
@@ -87,14 +91,14 @@ public static void decode(int error1,int error2) throws IOException
 			int[][][] dataCache = new int[count][M-1][M+2];
 
 			System.out.print("输出原数据："+"\n");
-		    display(tempMemory[0]);
+		    //display(tempMemory[0]);
 			
 			System.out.print("输出转存数据："+"\n");
 			for(int i=0;i<count;i++)
 			{
 				dataCache[i]=getColumnData(tempMemory[i]);
 			}
-			display(dataCache[0]);
+			//display(dataCache[0]);
 										
 			//进行编码
 			int[] s=new int[count];
@@ -409,11 +413,21 @@ public static void main(String[] args) throws IOException
 		if((length % M)!=0)
 			BLOCK_SIZE = (length / M) + 1;
 	
-		split();//分块   
-	    encode();//编码
-		int error1 = 2,error2 = 3;//错误位置       //56/                   /05/15/25/35/45
-        decode(error1,error2);//译码
-		merge();//合并文件块
+		int[][] buffer_split=split();//分块   
+	    int[][] tempMatrix=encode();//编码
+//	    for(int i=0;i<buffer_split.length;i++)
+//	    {
+//	    	 if(buffer_split[i]==tempMatrix[i])
+//	 	    {
+//	 	    	System.out.print("true");
+//	 	    }
+//	 	    else
+//	 	    	System.out.print("false");
+//	    }
+//	   
+//		int error1 = 2,error2 = 3;//错误位置       //56/                   /05/15/25/35/45
+//        decode(error1,error2);//译码
+//		merge();//合并文件块
 	}
 
 }
