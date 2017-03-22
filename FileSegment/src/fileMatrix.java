@@ -220,20 +220,25 @@ public static int[][][] BlockToMatrix(int[][] tempMatrix)
  * @throws IOException 
  * 
  */
-public static int[] MatrixToBlock(int[][] tempMatrix)
+public static int[] MatrixToBlock(int[][][] dataCache)
 {
 	int[] temp=new int[(int) BLOCK_SIZE];
 	int k=0;
-	for(int i=0;i<count;i++)
+	for(int c=0;c<count;c++)
 	{
-		for(int j=0;j<M-1;j++)
+		for(int i=0;i<M-1;i++)
 		{
-			if(k>=BLOCK_SIZE)
-				break;
-			temp[k]=tempMatrix[i][j];
-			k++;
+			for(int j=0;j<M+2;j++)
+			{
+				if(k>=BLOCK_SIZE)
+					break;
+				else
+					temp[k]=dataCache[c][i][j];
+				k++;
+			}
 		}
 	}
+	
 	return temp;
 }
 
