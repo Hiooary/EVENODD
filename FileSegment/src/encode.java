@@ -278,91 +278,114 @@ public static void decode(int error1,int error2) throws IOException
 		//错误的两个数据块
 		else if((error1 >= 0 && error1 < m) && (error2 >= 0 && error2 < m))
 		{
-//			//破坏数据,此处是置0/////////////////////////////////////////////////
-//			Destroy(error1,error2,dataCache);
-//			
-//			//破坏后的数据
-//			System.out.print("破坏后的数据\n");
-//			display(dataCache[0]);
-//			
-//			//增加一个元素全为0的行
-//			int[][][] temp=new int[count][m][m+2];
-//			for(int c=0;c<count;c++)
+			//从磁盘读取文件碎块
+			int[][] tempMatrix = new int[M+2][length];
+			for(int i=0;i<M+2;i++)
+			{
+				if(i==error1 || i==error2)
+				{
+					
+				}
+				else
+					tempMatrix[i]=FileToBlock("./2-"+i+".jpg");
+			}
+			
+			//转换为矩阵			
+			int[][][] tempMemory=BlockToMatrix(tempMatrix);
+			System.out.print("输出原数据："+"\n");
+		    display(tempMemory[0]);
+			
+			//转置矩阵，(M-1)*(M+2)
+			int[][][] dataCache = new int[count][M-1][M+2];		
+			for(int i=0;i<count;i++)
+			{
+				dataCache[i]=getColumnData(tempMemory[i]);
+			}
+			System.out.print("输出转存数据："+"\n");
+			display(dataCache[0]);
+			
+			//增加一个元素全为0的行
+			int[][][] temp=new int[count][m][m+2];
+			for(int c=0;c<count;c++)
+			{
+				temp[c]=addRow(dataCache[c],temp[c]);
+			}		
+			//display(temp[0]);
+			
+			int[] s=new int[count];//奇偶符号
+			for(int c=0;c<count;c++)
+			{
+				s[c]=0;
+				for(int l=0;l<m-1;l++)
+				{
+					s[c]=s[c]^dataCache[c][l][m]^dataCache[c][l][m+1];
+				}
+			}		
+			//System.out.print(s[0]);
+			
+			
+			//寻找水平综合征
+			int[][] S0 = new int[count][m];
+			for(int c=0;c<count;c++)
+			{
+				for(int u=0;u<m;u++)
+				{
+					S0[c][u]=0;
+					for(int l=0;l<=m;l++)
+					{
+						if(l != error1 && l!= error2)
+							S0[c][u]=S0[c][u]^temp[c][u][l];
+					}
+				}	
+			}
+			
+//			for(int i=0;i<S0[0].length;i++)
 //			{
-//				temp[c]=addRow(dataCache[c],temp[c]);
-//			}		
-//			//display(temp[0]);
-//			
-//			int[] s=new int[count];//奇偶符号
-//			for(int c=0;c<count;c++)
-//			{
-//				s[c]=0;
-//				for(int l=0;l<m-1;l++)
-//				{
-//					s[c]=s[c]^dataCache[c][l][m]^dataCache[c][l][m+1];
-//				}
-//			}		
-//			//System.out.print(s[0]);
-//			
-//			
-//			//寻找水平综合征
-//			int[][] S0 = new int[count][m];
-//			for(int c=0;c<count;c++)
-//			{
-//				for(int u=0;u<m;u++)
-//				{
-//					S0[c][u]=0;
-//					for(int l=0;l<=m;l++)
-//					{
-//						if(l != error1 && l!= error2)
-//							S0[c][u]=S0[c][u]^temp[c][u][l];
-//					}
-//				}	
+//				System.out.print(S0[0][i]+" ");
 //			}
-//			
-////			for(int i=0;i<S0[0].length;i++)
-////			{
-////				System.out.print(S0[0][i]+" ");
-////			}
-//			
-//			int[][] S1=new int[count][m];//对角线综合征
-//			for(int c=0;c<count;c++)
+			
+			int[][] S1=new int[count][m];//对角线综合征
+			for(int c=0;c<count;c++)
+			{
+				for(int u=0;u<m;u++)
+				{
+					S1[c][u]=s[c]^temp[c][u][m+1];
+					for(int l=0;l<m;l++)
+					{
+						if(l != error1 && l!= error2){	
+							S1[c][u]=S1[c][u]^temp[c][getMod(u-l,m)][l];
+						}
+					}
+				}
+			}
+			
+//			for(int i=0;i<S1[0].length;i++)
 //			{
-//				for(int u=0;u<m;u++)
-//				{
-//					S1[c][u]=s[c]^temp[c][u][m+1];
-//					for(int l=0;l<m;l++)
-//					{
-//						if(l != error1 && l!= error2){	
-//							S1[c][u]=S1[c][u]^temp[c][getMod(u-l,m)][l];
-//						}
-//					}
-//				}
+//				System.out.print(S1[0][i]);
 //			}
-//			
-////			for(int i=0;i<S1[0].length;i++)
-////			{
-////				System.out.print(S1[0][i]);
-////			}
-//			
-//			//通过步骤计算
-//			int temp_s;
-//			for(int c=0;c<count;c++)
-//			{
-//				s[c]=getMod((-(error2-error1)-1),m);
-//				temp_s=s[c];
-//				while(temp_s!=(m-1))
-//				{
-//					temp[c][temp_s][error2]=S1[c][getMod(error2+temp_s,m)]^temp[c][getMod(temp_s+(error2-error1),m)][error1];
-//					temp[c][temp_s][error1]=S0[c][temp_s]^temp[c][temp_s][error2];
-//					dataCache[c][temp_s][error2]=temp[c][temp_s][error2];
-//					dataCache[c][temp_s][error1]=temp[c][temp_s][error1];
-//					temp_s=getMod(temp_s-(error2-error1),m);
-//				}
-//			}
-//			
-//			System.out.print("修复后的数据\n");
-//			display(dataCache[0]);
+			
+			//通过步骤计算
+			int temp_s;
+			for(int c=0;c<count;c++)
+			{
+				s[c]=getMod((-(error2-error1)-1),m);
+				temp_s=s[c];
+				while(temp_s!=(m-1))
+				{
+					temp[c][temp_s][error2]=S1[c][getMod(error2+temp_s,m)]^temp[c][getMod(temp_s+(error2-error1),m)][error1];
+					temp[c][temp_s][error1]=S0[c][temp_s]^temp[c][temp_s][error2];
+					dataCache[c][temp_s][error2]=temp[c][temp_s][error2];
+					dataCache[c][temp_s][error1]=temp[c][temp_s][error1];
+					temp_s=getMod(temp_s-(error2-error1),m);
+				}
+			}
+			
+			System.out.print("修复后的数据\n");
+			display(dataCache[0]);
+			
+			 BlockToFile(MatrixToBlock(dataCache),error1);
+			 BlockToFile(MatrixToBlock(dataCache),error2);
+				
 		}
 	}
 	//只有一个数据块出错
