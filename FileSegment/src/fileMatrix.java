@@ -12,9 +12,9 @@ import java.nio.channels.FileChannel;
 
 public class fileMatrix extends evenodd{
 	
-private static int[][] buffer=null;//块的缓冲区	
+public static int[][] buffer=null;//块的缓冲区	
 public static final int M = 5;//块数，为素数
-public static long BLOCK_SIZE = 0;//块的大小
+public static long BLOCK_SIZE;//块的大小
 public static int length=0; 
 public static int count=0;
 
@@ -24,16 +24,11 @@ public static int count=0;
  * @return
  * @throws IOException 
  */
-public static void split() throws IOException
+public static int[][] split() throws IOException
 	{
 		int blockNo;
 		String filePath="./1.jpg";		
-		
-		length=(int) getFileLength(filePath);
-		if((length % M)!=0)
-			BLOCK_SIZE = (length / M) + 1;
-		//System.out.print(buffer_size);
-		
+	
 		//对buffer进行内存分配
 		int[][] buffer=new int[M][(int) BLOCK_SIZE];
 		
@@ -57,7 +52,10 @@ public static void split() throws IOException
 		{
 			fpr.close();
 		}		
-		//return buffer;  //不应该传回buffer,应该在函数里面自己读取文件碎块
+		
+		display(buffer);
+		
+		return buffer;  //不应该传回buffer,应该在函数里面自己读取文件碎块
 	}
 
 /******
@@ -65,7 +63,6 @@ public static void split() throws IOException
  * @return
  * @throws IOException 
  */	
-    @SuppressWarnings("resource")
 public static void merge() throws FileNotFoundException,IOException
     {
     	int blockNo;
@@ -80,7 +77,6 @@ public static void merge() throws FileNotFoundException,IOException
 	    	for(int k=0;k<M;k++)/////////////////////////////////////////////////////////
 	    	{
 	    		DataInputStream fpr=new DataInputStream(new BufferedInputStream(new FileInputStream("./2-"+blockNo+".jpg")));
-	    		//System.out.print(getFileLength("./2-"+blockNo+".jpg"));
 	    		for(int i=0;i<BLOCK_SIZE;i++)
 	    		{
 	    			buffer[blockNo][i]=fpr.readByte();
@@ -146,24 +142,25 @@ public static long getFileLength(String filePath)
 public static int[] FileToBlock(String filePath) throws IOException
 {
 	//矩阵的个数
-	if((BLOCK_SIZE% (M-1))!=0)
+	if((BLOCK_SIZE % (M-1))!=0)
 		count= (int) (BLOCK_SIZE / (M-1) + 1);
 	int[] file_buffer= new int[(int) BLOCK_SIZE];
+
 	DataInputStream fpr=new DataInputStream(new BufferedInputStream(new FileInputStream(filePath)));	
 	try{
 		while(true)
 		{
 			for(int i=0;i<BLOCK_SIZE;i++)			
 			{
-					file_buffer[i]=fpr.readByte();
+				file_buffer[i]=fpr.readByte();
 			}
+			if(file_buffer.length==BLOCK_SIZE)
+				break;  //不手动退出的话，java相关网络协议一直不关闭，一直在循环
 		}
 	}catch(EOFException e)
 	{
 		fpr.close();
-	}		
-//	for(int i=0;i<file_buffer.length;i++)
-//	 System.out.print(file_buffer[i]);
+	}
 	
 	return file_buffer;
 }
@@ -191,15 +188,17 @@ public static void BlockToFile(int[] tempMatrix,int blockNo ) throws IOException
  */
 public static int[][][] BlockToMatrix(int[][] tempMatrix)
 {
-	int[][][] tempMemory=new int[count][M+2][M-1];//将数据划分为矩阵
+	int m=tempMatrix.length;
+	int[][][] tempMemory=new int[count][m][M-1];//将数据划分为矩阵
+	//display(tempMatrix);
     int t=0;
-	for(int k=0;k < count;k++)
+	for(int k=0;k<count;k++)
 	{
-	    for(int i=0;i<M+2;i++)
+	    for(int i=0;i<m;i++)
 	    {
+	    	t=(M-1)*k;
 	    	for(int j=0;j<M-1;j++)
 	    	{
-	    		//System.out.print(buffer[i][t]);
 	    		//对最后的一个矩阵补齐行数
 	    		if(t>=BLOCK_SIZE)
 	    		{
@@ -208,9 +207,14 @@ public static int[][][] BlockToMatrix(int[][] tempMatrix)
 	    		else
 	    			tempMemory[k][i][j]=tempMatrix[i][t];
 	    		t++;
-	    	}			
+	    	}	
+    		
 		}
 	 }
+	
+//	 for(int i=0;i<count;i++)
+//      display(tempMemory[i]);
+	 
 	return tempMemory;
 }
 
@@ -238,7 +242,7 @@ public static int[] MatrixToBlock(int[][][] dataCache)
 			}
 		}
 	}
-	
+
 	return temp;
 }
 

@@ -1,3 +1,12 @@
+import java.io.BufferedInputStream;
+import java.io.DataInputStream;
+import java.io.DataOutputStream;
+import java.io.EOFException;
+import java.io.FileInputStream;
+import java.io.FileNotFoundException;
+import java.io.FileOutputStream;
+import java.io.IOException;
+
 
 /******************************
  *******算法的一些基本函数
@@ -108,8 +117,9 @@ public class evenodd {
 		}
 		return temp;
 	}
-	public static void display(int[][] temp)//显示
+	public static void display(int[][] temp)
 	{
+		
 		for(int i=0;i<temp.length;i++)
 		{
 			for(int j=0;j<temp[i].length;j++)
@@ -136,7 +146,24 @@ public class evenodd {
 		}
 		return dataCache;
 	}
-	
+//	public static void ShowChange(int[][][] temp,String filePath) throws IOException
+//	{
+//		FileOutputStream fpw=(new FileOutputStream(filePath));
+//    	try{
+//	    	for(int k=0;k<temp.length;k++)/////////////////////////////////////////////////////////
+//	    	{
+//	    		for(int i=0;i<temp[k].length;i++)
+//	    		{
+//	    			for(int j=0;j<temp[k][i].length;j++)
+//	    			{
+//						fpw.write(temp[k][i][j]);
+//	    			}
+//	    		}
+//	    	}
+//    	}catch(EOFException e){
+//    		fpw.close();
+//    	}
+	}
 	
 	//	public static int[][] encode(int[][] tempMemory)//编码
 //	{
@@ -409,4 +436,4 @@ public class evenodd {
 //
 //	}
 
-}
+
