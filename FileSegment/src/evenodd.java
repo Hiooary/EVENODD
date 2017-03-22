@@ -4,6 +4,7 @@
  *******
  */  
 public class evenodd {
+	private static final int M = 5;//块数，为素数
 	
 	public static int getMod(int a,int b)//有限域上的模运算
 	{
@@ -30,7 +31,7 @@ public class evenodd {
     public static int getCommonFactor(int[][] dataCache)//求s
 	{
 		int s=0;
-		int m=dataCache[0].length;
+		int m=M;
 		for(int i=1;i<m;i++)
 		{
 			s=s^dataCache[getMod(m-1-i, m)][i];
