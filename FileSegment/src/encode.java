@@ -413,8 +413,9 @@ public static void main(String[] args) throws IOException
 		if((length % M)!=0)
 			BLOCK_SIZE = (length / M) + 1;
 	
-		int[][] buffer_split=split();//·Ö¿é   
-	    int[][] tempMatrix=encode();//±àÂë
+		split();
+//		int[][] buffer_split=split();//·Ö¿é   
+//	    int[][] tempMatrix=encode();//±àÂë
 //	    for(int i=0;i<buffer_split.length;i++)
 //	    {
 //	    	 if(buffer_split[i]==tempMatrix[i])
