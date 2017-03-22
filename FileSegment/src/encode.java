@@ -409,9 +409,9 @@ public static void main(String[] args) throws IOException
 		if((length % M)!=0)
 			BLOCK_SIZE = (length / M) + 1;
 	
-//		split();//分块   
-//	    encode();//编码
-		int error1 = 2,error2 = 6;//错误位置       //56/                   /05/15/25/35/45
+		split();//分块   
+	    encode();//编码
+		int error1 = 2,error2 = 3;//错误位置       //56/                   /05/15/25/35/45
         decode(error1,error2);//译码
 		merge();//合并文件块
 	}
