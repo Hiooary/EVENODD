@@ -50,12 +50,12 @@ public class evenodd {
 	}
 	public static int[] horiExclusive_OR(int[][] dataCache) {//水平校验
 		// TODO Auto-generated method stub
-		int l=dataCache.length;		
+		int l=M-1;		
 		int horiExculsive[]=new int[l];
 		for(int i=0;i<l;i++)
 		{
 			int temp=0;
-			for(int j=0;j<dataCache[i].length;j++)
+			for(int j=0;j<M;j++)
 			{
 				temp=temp^dataCache[i][j];
 			}

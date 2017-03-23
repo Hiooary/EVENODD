@@ -232,16 +232,16 @@ public static int[][][] decode(int error1,int error2) throws IOException
 			//并用文件格式输出
 			BlockToFile(MatrixToBlock(dataCache,error1),error1);
 			
+			//恢复error2
 			int[][] tempMatrix1=new int[count][];
 			for(int c=0;c<count;c++)
 			{
 				tempMatrix1[c]=horiExclusive_OR(dataCache[c]);
-			    for(int i=0;i<temp[c].length-1;i++)
+			    for(int i=0;i<M-1;i++)
 				    {				
 				    	dataCache[c][i][error2]=tempMatrix1[c][i];				    
 				    }
 			}
-			
 			//并用文件格式表示
 			BlockToFile(MatrixToBlock(dataCache,error2),error2);
 				
@@ -452,27 +452,12 @@ public static void main(String[] args) throws IOException
 			BLOCK_SIZE = (length / M) + 1;
 	
 	
-		//split();//分块   
-		//encode();//编码
-		int error1 = 1,error2 = 6;//错误位置       //56/                   /05/15/25/35/45
+//		split();//分块   
+//		encode();//编码
+		int error1 = 0,error2 = 4;//错误位置       //56/                   /05/15/25/35/45
         decode(error1,error2);//译码
 		merge();//合并文件块
-	 
-	    //分块读取的数据与编码读取的数据相同
-//	    for(int i=0;i<10;i++)
-//	    {
-////	    	for(int j=0;j<tempDataCache[0].length;j++)
-////	    	{
-////	    	 	 if(buffer_split[i][j]==tempMatrix[i][j])
-////	 	 	    {
-////	 	 	    	System.out.print("t");
-////	 	 	    }
-////	 	 	    else
-////	 	 	    	System.out.print("f");
-//	    		//display(tempDataCache[i]);
-////	    	}
-//	    }
-	   
+		
 //        System.out.print((-1)^(-1)^(72)^(22)^(-61));//第一行
 //        System.out.print((-2)^(-26)^(7)^(-61));//s
 //        System.out.print((-2)^(-26)^(7)^(-61)^(-1)^(105)^(33)^(43));//对角线
