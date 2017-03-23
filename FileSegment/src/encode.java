@@ -52,6 +52,9 @@ public static int[][] encode() throws IOException
 	}
 //	s[0]=getCommonFactor(dataCache[0]);
 //	System.out.print(s[0]);
+	
+	//display(tempMatrix1);
+	//display(tempMatrix2);
 
 	System.out.print("存储得到的校验盘\n");
 //	for(int i=0;i<10;i++)
@@ -60,11 +63,9 @@ public static int[][] encode() throws IOException
 		display(temp[0]);
 	//}
 	
-	
 	//将编码后的结果以文件形式存储
-	BlockToFile(MatrixToBlock(temp),M);
-	BlockToFile(MatrixToBlock(temp),M+1);
-	
+	BlockToFile(MatrixToBlock(temp,M),M);
+	BlockToFile(MatrixToBlock(temp,M+1),M+1);
 	return tempMatrix;
 }
 
@@ -94,6 +95,8 @@ public static int[][][] decode(int error1,int error2) throws IOException
 				else
 					tempMatrix[i]=FileToBlock("./2-"+i+".jpg");
 			}
+			
+			
 			//转换为矩阵
 			int[][][] tempMemory=BlockToMatrix(tempMatrix);
 			
@@ -109,8 +112,6 @@ public static int[][][] decode(int error1,int error2) throws IOException
 				dataCache[i]=getColumnData(tempMemory[i]);
 			}
 			display(dataCache[0]);
-			
-	
 					
 			//进行编码
 			int[] s=new int[count];
@@ -129,8 +130,8 @@ public static int[][][] decode(int error1,int error2) throws IOException
 //			tempMatrix2[0]=diagExclusive_OR(dataCache[0],s[0]);
 //			System.out.print(s[0]);
 //			System.out.print(tempMatrix2[0][0]);
-			
-			
+			//display(tempMatrix1);
+			//display(tempMatrix2);
 			
 			//将译码出的数据写回丢失数据
 			for(int k=0;k<count;k++)
@@ -143,8 +144,8 @@ public static int[][][] decode(int error1,int error2) throws IOException
 			}
 			
 			//将编码后的结果以文件形式存储
-			BlockToFile(MatrixToBlock(dataCache),error1);
-			BlockToFile(MatrixToBlock(dataCache),error2);
+			BlockToFile(MatrixToBlock(dataCache,error1),error1);
+			BlockToFile(MatrixToBlock(dataCache,error2),error2);
 		
 			//控制台输出				
 			System.out.print("修复后的数据\n");
@@ -160,11 +161,24 @@ public static int[][][] decode(int error1,int error2) throws IOException
 			{
 				if(i==error1 || i==error2)
 				{
-					
+//					for(int b=0;i<BLOCK_SIZE;i++)			
+//					{
+//						 tempMatrix[error1][b]=0;
+//					}
 				}
 				else
 					tempMatrix[i]=FileToBlock("./2-"+i+".jpg");
 			}
+//			tempMatrix[6]=FileToBlock("./2-"+6+".jpg");
+			for(int i=0;i<tempMatrix.length;i++)
+			{
+				for(int j=0;j<10;j++)
+				{
+					System.out.print(tempMatrix[i][j]+" ");
+				}
+				System.out.print("\n");
+			}
+			//System.out.print(tempMatrix.length);
 			//display(tempMatrix);
 			
 			int[][][] tempMemory=BlockToMatrix(tempMatrix);
@@ -216,7 +230,7 @@ public static int[][][] decode(int error1,int error2) throws IOException
 				}		
 			}
 			//并用文件格式输出
-			BlockToFile(MatrixToBlock(dataCache),error1);
+			BlockToFile(MatrixToBlock(dataCache,error1),error1);
 			
 			int[][] tempMatrix1=new int[count][];
 			for(int c=0;c<count;c++)
@@ -229,7 +243,7 @@ public static int[][][] decode(int error1,int error2) throws IOException
 			}
 			
 			//并用文件格式表示
-			BlockToFile(MatrixToBlock(dataCache),error2);
+			BlockToFile(MatrixToBlock(dataCache,error2),error2);
 				
 		    //控制台输出
 		    System.out.print("修复后的数据\n");
@@ -298,8 +312,8 @@ public static int[][][] decode(int error1,int error2) throws IOException
 			 System.out.print("修复后的数据\n");
 			 display(dataCache[0]);
 			 
-			 BlockToFile(MatrixToBlock(dataCache),error1);
-			BlockToFile(MatrixToBlock(dataCache),error2);
+			 BlockToFile(MatrixToBlock(dataCache,error1),error1);
+			BlockToFile(MatrixToBlock(dataCache,error2),error2);
 			
 		}
 		//错误的两个数据块
@@ -410,8 +424,8 @@ public static int[][][] decode(int error1,int error2) throws IOException
 			System.out.print("修复后的数据\n");
 			display(dataCache[0]);
 			
-			 BlockToFile(MatrixToBlock(dataCache),error1);
-			 BlockToFile(MatrixToBlock(dataCache),error2);
+			 BlockToFile(MatrixToBlock(dataCache,error1),error1);
+			 BlockToFile(MatrixToBlock(dataCache,error2),error2);
 				
 		}
 	}
@@ -437,16 +451,12 @@ public static void main(String[] args) throws IOException
 		if((length % M)!=0)
 			BLOCK_SIZE = (length / M) + 1;
 	
-		//int[][] buffer_split=
-		//split();//分块   
-//	    int[][] tempMatrix=
-		//encode();//编码
-		int error1 = 2,error2 = 5;//错误位置       //56/                   /05/15/25/35/45
-       // int[][][] tempDataCache=
-         decode(error1,error2);//译码
-		//merge();//合并文件块
-	    
 	
+		//split();//分块   
+		//encode();//编码
+		int error1 = 1,error2 = 6;//错误位置       //56/                   /05/15/25/35/45
+        decode(error1,error2);//译码
+		merge();//合并文件块
 	 
 	    //分块读取的数据与编码读取的数据相同
 //	    for(int i=0;i<10;i++)
@@ -463,9 +473,9 @@ public static void main(String[] args) throws IOException
 ////	    	}
 //	    }
 	   
-        System.out.print((-1)^(-1)^(72)^(22)^(-61));//第一行
-        System.out.print((-2)^(-26)^(7)^(-61));//s
-        System.out.print((-2)^(-26)^(7)^(-61)^(-1)^(105)^(33)^(43));//对角线
+//        System.out.print((-1)^(-1)^(72)^(22)^(-61));//第一行
+//        System.out.print((-2)^(-26)^(7)^(-61));//s
+//        System.out.print((-2)^(-26)^(7)^(-61)^(-1)^(105)^(33)^(43));//对角线
 	}
 
 }

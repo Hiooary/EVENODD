@@ -153,6 +153,7 @@ public static int[] FileToBlock(String filePath) throws IOException
 			for(int i=0;i<BLOCK_SIZE;i++)			
 			{
 				file_buffer[i]=fpr.readByte();
+				//System.out.print(file_buffer[i]);
 			}
 			if(file_buffer.length==BLOCK_SIZE)
 				break;  //不手动退出的话，java相关网络协议一直不关闭，一直在循环
@@ -161,7 +162,7 @@ public static int[] FileToBlock(String filePath) throws IOException
 	{
 		fpr.close();
 	}
-	
+	//System.out.print("\n");
 	return file_buffer;
 }
 /******
@@ -220,26 +221,26 @@ public static int[][][] BlockToMatrix(int[][] tempMatrix)
 
 /******
  * 将矩阵转换为 块
+ * @param m 
  * @return
  * @throws IOException 
  * 
  */
-public static int[] MatrixToBlock(int[][][] dataCache)
+public static int[] MatrixToBlock(int[][][] dataCache, int m)
 {
 	int[] temp=new int[(int) BLOCK_SIZE];
 	int k=0;
+	int j=m;
 	for(int c=0;c<count;c++)
 	{
 		for(int i=0;i<M-1;i++)
 		{
-			for(int j=0;j<M+2;j++)
-			{
 				if(k>=BLOCK_SIZE)
 					break;
 				else
 					temp[k]=dataCache[c][i][j];
 				k++;
-			}
+			//}
 		}
 	}
 
