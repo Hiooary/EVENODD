@@ -53,7 +53,7 @@ public static int[][] split() throws IOException
 			fpr.close();
 		}		
 		
-		display(buffer);
+		//display(buffer);
 		
 		return buffer;  //不应该传回buffer,应该在函数里面自己读取文件碎块
 	}

@@ -44,6 +44,7 @@ public class evenodd {
 		for(int i=1;i<m;i++)
 		{
 			s=s^dataCache[getMod(m-1-i, m)][i];
+			//System.out.print(dataCache[getMod(m-1-i, m)][i]+" ");
 		}
 		return s;
 	}
@@ -64,19 +65,21 @@ public class evenodd {
 	}
 	public static int[] diagExclusive_OR(int[][] dataCache, int commonFactor) {//对角线校验
 		// TODO Auto-generated method stub
-		int l=dataCache.length;
+		int l=M-1;
 		int diagExclusive[] = new int[l];
 		for(int i=0;i<l;i++)
 		{
 			int temp=commonFactor;
-			for(int j=0; j<dataCache[i].length;j++)
+			for(int j=0; j<M;j++)
 			{
-				int t=getMod((i-j),dataCache[i].length);
+				int t=getMod((i-j),M);
 				if(t>=l)
 				{
 					continue;
 				}
 				temp=temp^dataCache[t][j];
+				//System.out.print(dataCache[t][j]);
+				
 			}
 			diagExclusive[i]=temp;
 		}
@@ -84,7 +87,7 @@ public class evenodd {
 	}
 	public static int[][] matrixTransposition(int[] tempMatrix1,int[] tempMatrix2, int[][] dataCache) {//将获得的校验矩阵存储
 		// TODO Auto-generated method stub
-		int m=dataCache[0].length;
+		int m=M;
 		int[][] temp=new int[m-1][m+2];
 		for(int i=0;i<dataCache.length;i++)
 		{
