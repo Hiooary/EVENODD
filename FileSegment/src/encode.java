@@ -449,13 +449,13 @@ public static void main(String[] args) throws IOException
 		String filePath="./1.jpg";		
 		length=(int) getFileLength(filePath);
 		if((length % M)!=0)
-			BLOCK_SIZE = (length / M) + 1;
+			BLOCK_SIZE = (length / M) + 1;//取上限
 	
 	
 //		split();//分块   
 //		encode();//编码
-		int error1 = 0,error2 = 4;//错误位置       //56/                   /05/15/25/35/45
-        decode(error1,error2);//译码
+//		int error1 = 0,error2 = 4;//错误位置       //56/                   /05/15/25/35/45
+//        decode(error1,error2);//译码
 		merge();//合并文件块
 		
 //        System.out.print((-1)^(-1)^(72)^(22)^(-61));//第一行

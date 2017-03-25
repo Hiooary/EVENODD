@@ -24,13 +24,12 @@ public static int count=0;
  * @return
  * @throws IOException 
  */
-public static int[][] split() throws IOException
+public static void split() throws IOException
 	{
 		int blockNo;
 		String filePath="./1.jpg";		
 	
-		//对buffer进行内存分配
-		int[][] buffer=new int[M][(int) BLOCK_SIZE];
+		byte[] ReadBuffer=new byte[(int) BLOCK_SIZE];//一次性读取 BLOCK_SIZE 大小字节
 		
 		//以二进制打开文件
 		DataInputStream fpr=new DataInputStream(new BufferedInputStream(new FileInputStream(filePath)));
@@ -39,23 +38,19 @@ public static int[][] split() throws IOException
 			while(true)
 			{
 				DataOutputStream fpw=new DataOutputStream(new FileOutputStream("./2-"+blockNo+".jpg"));
-				
-				for(int i=0;i<BLOCK_SIZE;i++)			
-				{
-					buffer[blockNo][i]=fpr.readByte();
-					fpw.writeByte((buffer[blockNo][i]));
-				}
+				fpr.read(ReadBuffer);
+				fpw.write(ReadBuffer);;
 				fpw.close();
 				blockNo++;
+				if(blockNo>=M)
+				{
+					break;
+				}
 			}
 		}catch(EOFException e)
 		{
 			fpr.close();
-		}		
-		
-		//display(buffer);
-		
-		return buffer;  //不应该传回buffer,应该在函数里面自己读取文件碎块
+		}				
 	}
 
 /******
@@ -65,25 +60,25 @@ public static int[][] split() throws IOException
  */	
 public static void merge() throws FileNotFoundException,IOException
     {
-    	int blockNo;
-
-    	BLOCK_SIZE=getFileLength("./2-0.jpg");
-    	int[][] buffer=new int[M][(int) BLOCK_SIZE];
+    	
     	String filePath="./3.jpg";
-   
+    	int blockNo;
+    	byte[] WriteBuffer=new byte[(int) BLOCK_SIZE];
+
     	DataOutputStream fpw=new DataOutputStream(new FileOutputStream(filePath));
     	blockNo=0;    	
     	try{
-	    	for(int k=0;k<M;k++)/////////////////////////////////////////////////////////
+	    	for(int k=0;k<M;k++)
 	    	{
 	    		DataInputStream fpr=new DataInputStream(new BufferedInputStream(new FileInputStream("./2-"+blockNo+".jpg")));
-	    		for(int i=0;i<BLOCK_SIZE;i++)
-	    		{
-	    			buffer[blockNo][i]=fpr.readByte();
-					fpw.writeByte(buffer[blockNo][i]);   			
-	    		}
+	    		fpr.read(WriteBuffer);
+				fpw.write(WriteBuffer);;   			
 	    		fpr.close();
 	    		blockNo++;	
+	    		if(blockNo>=M)
+	    		{
+	    			break;
+	    		}
 	    	}
     	}catch(EOFException e){
     		fpw.close();
