@@ -24,10 +24,10 @@ public class evenodd {
 		else
 			return (a+b)%b;
 	}
-	public static int[][] getColumnData(int[][] tempMemory){//从对象数组中获取某列的方法
+	public static byte[][] getColumnData(byte[][] tempMemory){//从对象数组中获取某列的方法
 		int m=tempMemory.length;
 		int l=tempMemory[0].length;
-		int[][] temp=new int[l][m];
+		byte[][] temp=new byte[l][m];
 		for(int i=0;i<l;i++)
 		{
 			for(int j=0;j<m;j++)
@@ -37,39 +37,39 @@ public class evenodd {
 		}
 		return temp;	
 	}	
-    public static int getCommonFactor(int[][] dataCache)//求s
+    public static byte getCommonFactor(byte[][] dataCache)//求s
 	{
-		int s=0;
+		byte s=0;
 		int m=M;
 		for(int i=1;i<m;i++)
 		{
-			s=s^dataCache[getMod(m-1-i, m)][i];
+			s=(byte) (s^dataCache[getMod(m-1-i, m)][i]);
 			//System.out.print(dataCache[getMod(m-1-i, m)][i]+" ");
 		}
 		return s;
 	}
-	public static int[] horiExclusive_OR(int[][] dataCache) {//水平校验
+	public static byte[] horiExclusive_OR(byte[][] dataCache) {//水平校验
 		// TODO Auto-generated method stub
 		int l=M-1;		
-		int horiExculsive[]=new int[l];
+		byte[] horiExculsive=new byte[l];
 		for(int i=0;i<l;i++)
 		{
-			int temp=0;
+			byte temp=0;
 			for(int j=0;j<M;j++)
 			{
-				temp=temp^dataCache[i][j];
+				temp=(byte) (temp^dataCache[i][j]);
 			}
 			horiExculsive[i]=temp;
 		}
 		return horiExculsive;
 	}
-	public static int[] diagExclusive_OR(int[][] dataCache, int commonFactor) {//对角线校验
+	public static byte[] diagExclusive_OR(byte[][] dataCache, byte commonFactor) {//对角线校验
 		// TODO Auto-generated method stub
 		int l=M-1;
-		int diagExclusive[] = new int[l];
+		byte[] diagExclusive = new byte[l];
 		for(int i=0;i<l;i++)
 		{
-			int temp=commonFactor;
+			byte temp=commonFactor;
 			for(int j=0; j<M;j++)
 			{
 				int t=getMod((i-j),M);
@@ -77,7 +77,7 @@ public class evenodd {
 				{
 					continue;
 				}
-				temp=temp^dataCache[t][j];
+				temp=(byte) (temp^dataCache[t][j]);
 				//System.out.print(dataCache[t][j]);
 				
 			}
@@ -85,10 +85,10 @@ public class evenodd {
 		}
 		return diagExclusive;
 	}
-	public static int[][] matrixTransposition(int[] tempMatrix1,int[] tempMatrix2, int[][] dataCache) {//将获得的校验矩阵存储
+	public static byte[][] matrixTransposition(byte[] tempMatrix1,byte[] tempMatrix2, byte[][] dataCache) {//将获得的校验矩阵存储
 		// TODO Auto-generated method stub
 		int m=M;
-		int[][] temp=new int[m-1][m+2];
+		byte[][] temp=new byte[m-1][m+2];
 		for(int i=0;i<dataCache.length;i++)
 		{
 			for(int j=0;j<m;j++)
@@ -104,7 +104,7 @@ public class evenodd {
 		
 		return temp;
 	}
-	public static int[][] addRow(int[][] dataCache,int[][] temp) {//增加一个0行
+	public static byte[][] addRow(byte[][] dataCache,byte[][] temp) {//增加一个0行
 		// TODO Auto-generated method stub
 		int i,j;
 		for(i=0;i<dataCache.length;i++)
@@ -120,7 +120,7 @@ public class evenodd {
 		}
 		return temp;
 	}
-	public static void display(int[][] temp)
+	public static void display(byte[][] temp)
 	{
 		
 		for(int i=0;i<temp.length;i++)

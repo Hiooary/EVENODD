@@ -11,17 +11,17 @@ public class encode extends fileMatrix{
  * 编码
  * @throws IOException 
  */	
-public static int[][] encode() throws IOException
+public static byte[][] encode() throws IOException
 {
 	//读取五个文件碎块
-	int[][] tempMatrix = new int[M][length];
+	byte[][] tempMatrix = new byte[M][length];
 	for(int i=0;i<M;i++)
 	{
 		tempMatrix[i]=FileToBlock("./2-"+i+".jpg");
 	}
 	//display(tempMatrix);
 	
-	int[][][] tempMemory=BlockToMatrix(tempMatrix);
+	byte[][][] tempMemory=BlockToMatrix(tempMatrix);
 	System.out.print("输出原数据："+"\n");
 //	for(int i=0;i<count;i++)
 //	{
@@ -29,7 +29,7 @@ public static int[][] encode() throws IOException
 		display(tempMemory[0]);
 	//}
 	
-	int[][][] dataCache = new int[count][M-1][M];//转置矩阵，4*5
+	byte[][][] dataCache = new byte[count][M-1][M];//转置矩阵，4*5
 	
 	System.out.print("输出转存数据："+"\n");
 	for(int i=0;i<count;i++)
@@ -39,10 +39,10 @@ public static int[][] encode() throws IOException
 	display(dataCache[0]);
 
 	
-	int[][] tempMatrix1=new int[count][M-1];//行校验
-	int[][]tempMatrix2=new int[count][M-1];//对角线校验
-	int[][][] temp=new int[count][M-1][M+2];//存储校验数据后的盘符
-	int s[] = new int[count];//奇偶校验符号
+	byte[][] tempMatrix1=new byte[count][M-1];//行校验
+	byte[][]tempMatrix2=new byte[count][M-1];//对角线校验
+	byte[][][] temp=new byte[count][M-1][M+2];//存储校验数据后的盘符
+	byte s[] = new byte[count];//奇偶校验符号
 	for(int i=0;i<count;i++)
 	{
 		s[i]=getCommonFactor(dataCache[i]);
@@ -73,7 +73,7 @@ public static int[][] encode() throws IOException
  * 译码
  * @throws IOException 
  */		
-public static int[][][] decode(int error1,int error2) throws IOException
+public static byte[][][] decode(int error1,int error2) throws IOException
 {
 	int m=M;	
 	if(error1 != -1 && error2 !=-1)////两个磁盘出错
@@ -82,7 +82,7 @@ public static int[][][] decode(int error1,int error2) throws IOException
 		if(error1 == m && error2 == (m+1))
 		{
 			//从磁盘读取文件碎块
-			int[][] tempMatrix = new int[M+2][length];
+			byte[][] tempMatrix = new byte[M+2][length];
 			for(int i=0;i<M+2;i++)
 			{
 				if(i==error1 || i==error2)
@@ -98,10 +98,10 @@ public static int[][][] decode(int error1,int error2) throws IOException
 			
 			
 			//转换为矩阵
-			int[][][] tempMemory=BlockToMatrix(tempMatrix);
+			byte[][][] tempMemory=BlockToMatrix(tempMatrix);
 			
 			//转置矩阵，(M-1)*(M+2)
-			int[][][] dataCache = new int[count][M-1][M+2];
+			byte[][][] dataCache = new byte[count][M-1][M+2];
 
 			System.out.print("输出原数据："+"\n");
 		    display(tempMemory[0]);
@@ -114,10 +114,10 @@ public static int[][][] decode(int error1,int error2) throws IOException
 			display(dataCache[0]);
 					
 			//进行编码
-			int[] s=new int[count];
-			int[][] tempMatrix1=new int[count][M-1];
-			int[][] tempMatrix2=new int[count][M-1];
-			int[][][] temp=new int[count][M-1][M+2];//存储校验数据后的盘符	
+			byte[] s=new byte[count];
+			byte[][] tempMatrix1=new byte[count][M-1];
+			byte[][] tempMatrix2=new byte[count][M-1];
+			byte[][][] temp=new byte[count][M-1][M+2];//存储校验数据后的盘符	
 			for(int i=0;i<count;i++)
 			{
 				s[i]=getCommonFactor(dataCache[i]);
@@ -156,7 +156,7 @@ public static int[][][] decode(int error1,int error2) throws IOException
 			//错误的一个数据块和水平校验块
 			
 			//从磁盘读取文件碎块
-			int[][] tempMatrix = new int[M+2][length];
+			byte[][] tempMatrix = new byte[M+2][length];
 			for(int i=0;i<M+2;i++)
 			{
 				if(i==error1 || i==error2)
@@ -181,13 +181,13 @@ public static int[][][] decode(int error1,int error2) throws IOException
 			//System.out.print(tempMatrix.length);
 			//display(tempMatrix);
 			
-			int[][][] tempMemory=BlockToMatrix(tempMatrix);
+			byte[][][] tempMemory=BlockToMatrix(tempMatrix);
 			System.out.print("输出原数据："+"\n");
 		    display(tempMemory[0]);
 		   
 			
 			//转置矩阵，(M-1)*(M+2)
-			int[][][] dataCache = new int[count][M-1][M+2];		
+		    byte[][][] dataCache = new byte[count][M-1][M+2];		
 			for(int i=0;i<count;i++)
 			{
 				dataCache[i]=getColumnData(tempMemory[i]);
@@ -196,7 +196,7 @@ public static int[][][] decode(int error1,int error2) throws IOException
 			display(dataCache[0]);
 			
 			//增加一个元素全为0的行
-			int[][][] temp=new int[count][m][m+2];
+			byte[][][] temp=new byte[count][m][m+2];
 			for(int c=0;c<count;c++)
 			{
 				temp[c]=addRow(dataCache[c],temp[c]);
@@ -218,12 +218,12 @@ public static int[][][] decode(int error1,int error2) throws IOException
 			{
 				for(int k=0;k<temp[c].length-1;k++)
 				{
-					temp[c][k][error1]=s[c]^temp[c][getMod(error1+k,m)][m+1];
+					temp[c][k][error1]=(byte) (s[c]^temp[c][getMod(error1+k,m)][m+1]);
 					for(int l=0;l<temp[c].length;l++)
 					{	
 						if(l!=error1)
 						{		
-							temp[c][k][error1]=temp[c][k][error1]^temp[c][getMod(k+error1-l,m)][l];
+							temp[c][k][error1]=(byte) (temp[c][k][error1]^temp[c][getMod(k+error1-l,m)][l]);
 					    }	
 					}
 					dataCache[c][k][error1]=temp[c][k][error1];
@@ -233,7 +233,7 @@ public static int[][][] decode(int error1,int error2) throws IOException
 			BlockToFile(MatrixToBlock(dataCache,error1),error1);
 			
 			//恢复error2
-			int[][] tempMatrix1=new int[count][];
+			byte[][] tempMatrix1=new byte[count][];
 			for(int c=0;c<count;c++)
 			{
 				tempMatrix1[c]=horiExclusive_OR(dataCache[c]);
@@ -256,7 +256,7 @@ public static int[][][] decode(int error1,int error2) throws IOException
 		else if((error1 >= 0 && error1 < m) && error2 == (m+1) )
 		{
 			//从磁盘读取文件碎块
-			int[][] tempMatrix = new int[M+2][length];
+			byte[][] tempMatrix = new byte[M+2][length];
 			for(int i=0;i<M+2;i++)
 			{
 				if(i==error1 || i==error2)
@@ -268,12 +268,12 @@ public static int[][][] decode(int error1,int error2) throws IOException
 			}
 			
 			//转换为矩阵			
-			int[][][] tempMemory=BlockToMatrix(tempMatrix);
+			byte[][][] tempMemory=BlockToMatrix(tempMatrix);
 			System.out.print("输出原数据："+"\n");
 		    display(tempMemory[0]);
 			
 			//转置矩阵，(M-1)*(M+2)
-			int[][][] dataCache = new int[count][M-1][M+2];		
+		    byte[][][] dataCache = new byte[count][M-1][M+2];		
 			for(int i=0;i<count;i++)
 			{
 				dataCache[i]=getColumnData(tempMemory[i]);
@@ -290,14 +290,14 @@ public static int[][][] decode(int error1,int error2) throws IOException
 					for(int j=0;j<dataCache[c][i].length-1;j++)
 					{
 						if(j != error1)
-						  dataCache[c][i][error1]=dataCache[c][i][error1]^dataCache[c][i][j];
+						  dataCache[c][i][error1]=(byte) (dataCache[c][i][error1]^dataCache[c][i][j]);
 					}
 				}	
 			}
 			
 			//根据对角线公式恢复error2
-			int[] s=new int[count];
-			int[][] tempMatrix2=new int[count][];
+			byte[] s=new byte[count];
+			byte[][] tempMatrix2=new byte[count][];
 			for(int c=0;c<count;c++)
 			{
 				s[c]=getCommonFactor(dataCache[c]);
@@ -320,7 +320,7 @@ public static int[][][] decode(int error1,int error2) throws IOException
 		else if((error1 >= 0 && error1 < m) && (error2 >= 0 && error2 < m))
 		{
 			//从磁盘读取文件碎块
-			int[][] tempMatrix = new int[M+2][length];
+			byte[][] tempMatrix = new byte[M+2][length];
 			for(int i=0;i<M+2;i++)
 			{
 				if(i==error1 || i==error2)
@@ -332,12 +332,12 @@ public static int[][][] decode(int error1,int error2) throws IOException
 			}
 			
 			//转换为矩阵			
-			int[][][] tempMemory=BlockToMatrix(tempMatrix);
+			byte[][][] tempMemory=BlockToMatrix(tempMatrix);
 			System.out.print("输出原数据："+"\n");
 		    display(tempMemory[0]);
 			
 			//转置矩阵，(M-1)*(M+2)
-			int[][][] dataCache = new int[count][M-1][M+2];		
+			byte[][][] dataCache = new byte[count][M-1][M+2];		
 			for(int i=0;i<count;i++)
 			{
 				dataCache[i]=getColumnData(tempMemory[i]);
@@ -346,7 +346,7 @@ public static int[][][] decode(int error1,int error2) throws IOException
 			display(dataCache[0]);
 			
 			//增加一个元素全为0的行
-			int[][][] temp=new int[count][m][m+2];
+			byte[][][] temp=new byte[count][m][m+2];
 			for(int c=0;c<count;c++)
 			{
 				temp[c]=addRow(dataCache[c],temp[c]);
@@ -413,8 +413,8 @@ public static int[][][] decode(int error1,int error2) throws IOException
 				temp_s=s[c];
 				while(temp_s!=(m-1))
 				{
-					temp[c][temp_s][error2]=S1[c][getMod(error2+temp_s,m)]^temp[c][getMod(temp_s+(error2-error1),m)][error1];
-					temp[c][temp_s][error1]=S0[c][temp_s]^temp[c][temp_s][error2];
+					temp[c][temp_s][error2]=(byte) (S1[c][getMod(error2+temp_s,m)]^temp[c][getMod(temp_s+(error2-error1),m)][error1]);
+					temp[c][temp_s][error1]=(byte) (S0[c][temp_s]^temp[c][temp_s][error2]);
 					dataCache[c][temp_s][error2]=temp[c][temp_s][error2];
 					dataCache[c][temp_s][error1]=temp[c][temp_s][error1];
 					temp_s=getMod(temp_s-(error2-error1),m);
@@ -449,13 +449,15 @@ public static void main(String[] args) throws IOException
 		String filePath="./1.jpg";		
 		length=(int) getFileLength(filePath);
 		if((length % M)!=0)
-			BLOCK_SIZE = (length / M) + 1;//取上限
+			DISK_SIZE = (length / M) + 1;//取上限
+		else
+			DISK_SIZE = length / M;
 	
 	
-//		split();//分块   
-//		encode();//编码
-//		int error1 = 0,error2 = 4;//错误位置       //56/                   /05/15/25/35/45
-//        decode(error1,error2);//译码
+		split();//分块   
+		encode();//编码
+		int error1 = 2,error2 = 3;//错误位置       //56/                   /25/35/01/02/03/04/14/34/23
+        decode(error1,error2);//译码
 		merge();//合并文件块
 		
 //        System.out.print((-1)^(-1)^(72)^(22)^(-61));//第一行
