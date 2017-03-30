@@ -29,7 +29,7 @@ public static void split() throws IOException
 		int blockNo;
 		String filePath="./1.jpg";		
 	
-		byte[] ReadBuffer=new byte[(int) DISK_SIZE];//一次性读取 BLOCK_SIZE 大小字节
+		byte[] ReadBuffer=new byte[(int) DISK_SIZE];//一次性读取 DISK_SIZE 大小字节
 		
 		//以二进制打开文件
 		DataInputStream fpr=new DataInputStream(new BufferedInputStream(new FileInputStream(filePath)));
@@ -51,6 +51,11 @@ public static void split() throws IOException
 		{
 			fpr.close();
 		}				
+		
+		for(int i=0;i<ReadBuffer.length;i++)
+		{
+			System.out.print(ReadBuffer[i]);
+		}
 	}
 
 /******
@@ -64,22 +69,29 @@ public static void merge() throws FileNotFoundException,IOException
     	String filePath="./3.jpg";
     	int blockNo;
     	byte[] WriteBuffer=new byte[(int) DISK_SIZE];
-
+    	
+    	//去除补充的字节数
+    	int differ=(int) (DISK_SIZE * M - length);
+    	byte[] WriteBufferDiffer=new byte[(int)(DISK_SIZE-differ)];
+    	
     	DataOutputStream fpw=new DataOutputStream(new FileOutputStream(filePath));
     	blockNo=0;    	
     	try{
-	    	for(int k=0;k<M;k++)
+	    	for(int k=0;k<M-1;k++)
 	    	{
 	    		DataInputStream fpr=new DataInputStream(new BufferedInputStream(new FileInputStream("./2-"+blockNo+".jpg")));
 	    		fpr.read(WriteBuffer);
-				fpw.write(WriteBuffer);;   			
+				fpw.write(WriteBuffer);			
 	    		fpr.close();
 	    		blockNo++;	
-	    		if(blockNo>=M)
-	    		{
-	    			break;
-	    		}
 	    	}
+	    	//最后一块特殊对待，但是好像多几个字节并没什么影响
+	    	DataInputStream fpr=new DataInputStream(new BufferedInputStream(new FileInputStream("./2-"+blockNo+".jpg")));
+	    	fpr.read(WriteBufferDiffer);
+	    	fpw.write(WriteBufferDiffer);	
+	    	fpr.close();
+	    	blockNo++;	
+	    	
     	}catch(EOFException e){
     		fpw.close();
     	}
@@ -140,10 +152,10 @@ public static byte[] FileToBlock(String filePath) throws IOException
 	if((DISK_SIZE % (M-1))!=0)
 		count= (int) (DISK_SIZE / (M-1) + 1);//块的大小
 	else
-		count=(int)(DISK_SIZE)/(M-1);
+		count=(int)(DISK_SIZE/(M-1));
 
 	byte[] file_buffer= new byte[(int) DISK_SIZE];
-	//int[] file_block=new int[(int) DISK_SIZE];
+
 	DataInputStream fpr=new DataInputStream(new BufferedInputStream(new FileInputStream(filePath)));	
 	try{
 		while(true)
@@ -156,13 +168,7 @@ public static byte[] FileToBlock(String filePath) throws IOException
 	{
 		fpr.close();
 	}
-	
-//	for(int i=0;i<DISK_SIZE;i++)
-//	{
-//		//byte ->int
-//		file_block[i]=byteToInt(file_buffer,i*4);
-//	}
-	
+
 	return file_buffer;
 }
 /******
@@ -173,16 +179,9 @@ public static byte[] FileToBlock(String filePath) throws IOException
  */
 public static void BlockToFile(byte[] tempMatrix,int blockNo ) throws IOException
 {
-	//int->byte
-//	byte[] file_buffer=new byte[(int) DISK_SIZE];
-//	for(int i=0;i<DISK_SIZE;i++)
-//	{
-//		file_buffer=intToByte(tempMatrix[i]);
-//	}
 	DataOutputStream fpw=new DataOutputStream(new FileOutputStream("./2-"+blockNo+".jpg"));
 	fpw.write(tempMatrix);;
 	fpw.close();	
-	
 }
 
 /******
@@ -239,45 +238,15 @@ public static byte[] MatrixToBlock(byte[][][] dataCache, int m)
 	{
 		for(int i=0;i<M-1;i++)
 		{
-				if(k>=DISK_SIZE)
-					break;
-				else
-					temp[k]=dataCache[c][i][j];
-				k++;
+			if(k>=DISK_SIZE)
+				break;
+			else
+				temp[k]=dataCache[c][i][j];
+			k++;
 		}
 	}
-
 	return temp;
-}
-
-public static byte[] intToByte(int integer)
-{
-	int byteNum=(40 -Integer.numberOfLeadingZeros (integer < 0 ? ~integer : integer))/ 8;
-	byte[] byteArray=new byte[4];
-	for(int i=0;i<byteNum;i++)
-	{
-		byteArray[3-i]=(byte)(integer>>>(i*8));
 	}
-	return byteArray;
-}
-public static int byteToInt(byte[] b,int offset)
-{
-	int value=0;
-	for(int i=0;i<4;i++)
-	{
-		if(offset>=b.length)
-			break;
-		else
-		{
-			int shift=(4-1-i)*8;
-			value+=(b[i+offset]& 0x000000FF)<<shift;
-		}
-	
-	}
-	return value;
-	}
-
-
 }
 
 
